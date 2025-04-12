@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@expo-google-fonts/gabarito": "^0.3.0",
-    "@expo/vector-icons": "^14.0.2",
+    "@expo/vector-icons": "^14.1.0",
     "@react-navigation/native": "^7.1.6",
     "@react-navigation/stack": "^7.2.10",
     "expo": "~52.0.43",

@@ -46,7 +46,6 @@ const SignIn: React.FC<SignInScreenProps> = ({ navigation }) => {
   const validateForm = () => {
     let isValid = true;
     
-    // Email validation
     if (!email) {
       setEmailError('Email is required');
       isValid = false;
@@ -57,7 +56,6 @@ const SignIn: React.FC<SignInScreenProps> = ({ navigation }) => {
       setEmailError('');
     }
     
-    // Password validation
     if (!password) {
       setPasswordError('Password is required');
       isValid = false;

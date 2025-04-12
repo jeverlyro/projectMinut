@@ -28,7 +28,6 @@ type SignUpScreenProps = {
 };
 
 const SignUpScreen: React.FC<SignUpScreenProps> = ({ navigation }) => {
-  // State for form inputs
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -37,7 +36,6 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ navigation }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   
-  // Error states
   const [nameError, setNameError] = useState('');
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
@@ -57,7 +55,6 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ navigation }) => {
   const validateForm = () => {
     let isValid = true;
     
-    // Name validation
     if (!name) {
       setNameError('Name is required');
       isValid = false;
@@ -65,7 +62,6 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ navigation }) => {
       setNameError('');
     }
     
-    // Email validation
     if (!email) {
       setEmailError('Email is required');
       isValid = false;
@@ -76,7 +72,6 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ navigation }) => {
       setEmailError('');
     }
     
-    // Password validation
     if (!password) {
       setPasswordError('Password is required');
       isValid = false;
@@ -87,7 +82,6 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ navigation }) => {
       setPasswordError('');
     }
     
-    // Confirm password validation
     if (!confirmPassword) {
       setConfirmPasswordError('Please confirm your password');
       isValid = false;
@@ -107,10 +101,8 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ navigation }) => {
     setIsLoading(true);
     
     try {
-      // Simulate API call delay
       await new Promise(resolve => setTimeout(resolve, 1500));
       
-      // Reset fields
       setName('');
       setEmail('');
       setPassword('');
@@ -151,7 +143,6 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ navigation }) => {
             <Text style={styles.title}>Create Account</Text>
             <Text style={styles.subtitle}>Join our community today</Text>
 
-            {/* Compact Form */}
             <View style={styles.formContainer}>
               <View style={styles.inputRow}>
                 <View style={styles.inputContainer}>
