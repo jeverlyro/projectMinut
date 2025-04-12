@@ -5,7 +5,7 @@ import * as Font from 'expo-font';
 import HomePage from './screens/homePage';
 import ExploreScreen from './screens/explorePage';
 import ProfileScreen from './screens/profilePage';
-import BottomNavbar from './components/BottomNavbar';
+import BottomNavbar from './components/bottomNavbar';
 
 const loadFonts = () => {
   return Font.loadAsync({
