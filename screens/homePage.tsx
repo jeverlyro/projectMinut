@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import {
   StyleSheet,
   Text,
@@ -9,44 +9,80 @@ import {
   ImageBackground,
   Animated,
   Image,
+  SafeAreaView,
+  StatusBar as RNStatusBar,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
-import { MaterialIcons, Ionicons } from '@expo/vector-icons';
+import { Feather } from '@expo/vector-icons';
+import * as Font from 'expo-font';
+import MapView, { Marker } from 'react-native-maps';
 
 const { width, height } = Dimensions.get('window');
+const SPACING = 16;
+
+const loadFonts = () => {
+  return Font.loadAsync({
+    'Gabarito-Regular': require('../assets/fonts/Gabarito-Regular.ttf'),
+    'Gabarito-Bold': require('../assets/fonts/Gabarito-Bold.ttf'),
+    'Gabarito-SemiBold': require('../assets/fonts/Gabarito-SemiBold.ttf'),
+  });
+};
 
 export default function HomePage() {
-  // Animation values
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-  const slideAnim = useRef(new Animated.Value(50)).current;
+  const [fontsLoaded, setFontsLoaded] = useState(false);
   
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const slideAnim = useRef(new Animated.Value(30)).current;
+  
+  useEffect(() => {
+    async function prepare() {
+      try {
+        await loadFonts();
+      } catch (e) {
+        console.warn(e);
+      } finally {
+        setFontsLoaded(true);
+      }
+    }
+    
+    prepare();
+  }, []);
+
   useEffect(() => {
     Animated.parallel([
       Animated.timing(fadeAnim, {
         toValue: 1,
-        duration: 1000,
+        duration: 800,
         useNativeDriver: true,
       }),
       Animated.timing(slideAnim, {
         toValue: 0,
-        duration: 800,
+        duration: 600,
         useNativeDriver: true,
       })
     ]).start();
   }, []);
 
+  if (!fontsLoaded) {
+    return (
+      <View style={styles.loadingContainer}>
+        <Text>Please wait ...</Text>
+      </View>
+    );
+  }
+
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <StatusBar style="light" />
       
       <ImageBackground 
         source={{ uri: 'https://images.unsplash.com/photo-1556513989-9f53e6ed8fe1?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80' }}
         style={styles.backgroundImage}
+        imageStyle={styles.backgroundImageStyle}
       >
         <LinearGradient
-          colors={['rgba(0,0,0,0.3)', 'rgba(0,0,0,0)']}
+          colors={['rgba(0,0,0,0.5)', 'rgba(0,0,0,0.2)', 'rgba(0,0,0,0.4)']}
           style={styles.gradientOverlay}
         />
         
@@ -54,24 +90,19 @@ export default function HomePage() {
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
-          {/* Floating Header */}
           <Animated.View 
             style={[
-              styles.floatingHeader, 
+              styles.header, 
               { opacity: fadeAnim, transform: [{ translateY: slideAnim }] }
             ]}
           >
-            <BlurView intensity={90} tint="dark" style={styles.headerBlur}>
-              <View style={styles.headerContent}>
-                <View style={styles.headerIconContainer}>
-                  <MaterialIcons name="location-on" size={24} color="#fff" />
-                </View>
-                <View style={styles.headerTextContainer}>
-                  <Text style={styles.headerTitle}>North Minahasa</Text>
-                  <Text style={styles.headerSubtitle}>The Land of Beauty and Culture</Text>
-                </View>
+            <View style={styles.locationRow}>
+              <View style={styles.locationPin}>
+                <Feather name="map-pin" size={18} color="#fff" />
               </View>
-            </BlurView>
+              <Text style={styles.locationText}>Minahasa Utara, Indonesia</Text>
+            </View>
+            <Text style={styles.pageTitle}>Minahasa Utara</Text>
           </Animated.View>
           
           {/* Content Cards */}
@@ -79,494 +110,392 @@ export default function HomePage() {
             {/* History Card */}
             <Animated.View 
               style={[
-                styles.sectionContainer,
+                styles.card,
                 { opacity: fadeAnim, transform: [{ translateY: Animated.multiply(slideAnim, 1.2) }] }
               ]}
             >
-              <View style={styles.sectionTitleRow}>
-                <Ionicons name="time-outline" size={22} color="#fff" />
-                <Text style={styles.sectionTitle}>History</Text>
+              <View style={styles.cardHeader}>
+                <View style={styles.cardIconContainer}>
+                  <Feather name="clock" size={18} color="#333" />
+                </View>
+                <Text style={styles.cardTitle}>Sejarah</Text>
               </View>
               
-              <BlurView intensity={55} tint="light" style={styles.glassCard}>
-                <View style={styles.cardContent}>
-                  <Image 
-                    source={{ uri: 'https://images.unsplash.com/photo-1591864370989-3df36c4ce33e?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60' }} 
-                    style={styles.cardImage}
-                  />
-                  <Text style={styles.paragraph}>
-                    North Minahasa (Minahasa Utara) is a regency located in North Sulawesi province of Indonesia.
-                    Established in 2004 after separating from Minahasa Regency, it has a rich history dating back centuries.
-                  </Text>
-                  <Text style={styles.paragraph}>
-                    The Minahasan people have a unique cultural heritage that has been preserved through generations.
-                    Initially inhabited by indigenous tribes, the region later experienced influences from Dutch colonial rule.
-                  </Text>
-                </View>
-              </BlurView>
+              <Image 
+                source={{ uri: 'https://atourin.obs.ap-southeast-3.myhuaweicloud.com/images/destination/minahasa-utara/gunung-klabat-profile1645959098.png' }} 
+                style={styles.cardImage}
+              />
+              
+              <View style={styles.cardBody}>
+                <Text style={styles.paragraph}>
+                  Minahasa Utara adalah kabupaten di provinsi Sulawesi Utara, Indonesia.
+                  Didirikan pada tahun 2004, kabupaten ini memisahkan diri dari Kabupaten Minahasa dengan sejarah kaya yang membentang selama berabad-abad.
+                </Text>
+                <Text style={styles.paragraph}>
+                  Masyarakat Minahasa mempertahankan warisan budaya unik yang dilestarikan melalui generasi,
+                  memadukan tradisi asli dengan pengaruh dari sejarah kolonial Belanda.
+                </Text>
+              </View>
             </Animated.View>
             
             {/* Geography Card */}
             <Animated.View 
               style={[
-                styles.sectionContainer,
+                styles.card,
                 { opacity: fadeAnim, transform: [{ translateY: Animated.multiply(slideAnim, 1.4) }] }
               ]}
             >
-              <View style={styles.sectionTitleRow}>
-                <Ionicons name="map-outline" size={22} color="#fff" />
-                <Text style={styles.sectionTitle}>Geography</Text>
+              <View style={styles.cardHeader}>
+                <View style={styles.cardIconContainer}>
+                  <Feather name="map" size={18} color="#333" />
+                </View>
+                <Text style={styles.cardTitle}>Geografi</Text>
               </View>
               
-              <BlurView intensity={55} tint="light" style={styles.glassCard}>
-                <View style={styles.cardContent}>
-                  <View style={styles.mapContainer}>
-                    <BlurView intensity={35} tint="light" style={styles.mapPlaceholder}>
-                      <Ionicons name="map" size={40} color="rgba(0,0,0,0.5)" />
-                      <Text style={styles.mapPlaceholderText}>Map of North Minahasa</Text>
-                    </BlurView>
-                  </View>
-                  
-                  <Text style={styles.caption}>
-                    Located at the northeastern tip of Sulawesi Island, Indonesia.
-                    It covers an area of approximately 1,059.24 km² and is bordered by the Celebes Sea.
-                  </Text>
-                  
-                  <View style={styles.divider} />
-                  
-                  <Text style={styles.subheading}>
-                    <Ionicons name="location" size={18} color="#2c3e50" /> Key Locations
-                  </Text>
-                  
-                  <View style={styles.locationList}>
-                    <View style={styles.locationItem}>
+              <View style={styles.mapContainer}>
+                <MapView
+                  style={styles.map}
+                  initialRegion={{
+                    latitude: 1.5268,     // Minahasa Utara coordinates
+                    longitude: 124.9593,
+                    latitudeDelta: 0.3,
+                    longitudeDelta: 0.3,
+                  }}
+                >
+                  <Marker
+                    coordinate={{ latitude: 1.4348, longitude: 124.9920 }}
+                    title="Airmadidi"
+                    description="Ibu kota Minahasa Utara"
+                  />
+                  <Marker
+                    coordinate={{ latitude: 1.6223, longitude: 124.8372 }}
+                    title="Taman Nasional Bunaken"
+                    description="Destinasi menyelam terkenal"
+                  />
+                  <Marker
+                    coordinate={{ latitude: 1.4719, longitude: 125.2289 }}
+                    title="Selat Lembeh"
+                    description="Destinasi menyelam terkenal"
+                  />
+                  <Marker
+                    coordinate={{ latitude: 1.4903, longitude: 125.0035 }}
+                    title="Gunung Klabat"
+                    description="Puncak tertinggi di Sulawesi Utara"
+                  />
+                </MapView>
+              </View>
+              
+              <View style={styles.cardBody}>
+                <Text style={styles.paragraph}>
+                  Terletak di ujung timur laut Pulau Sulawesi, Indonesia.
+                  Wilayah ini mencakup area sekitar 1.059,24 km² dan berbatasan dengan Laut Celebes.
+                </Text>
+                
+                <View style={styles.divider} />
+                
+                <Text style={styles.subheading}>Lokasi Penting</Text>
+                
+                <View style={styles.locationList}>
+                  {[
+                    'Airmadidi - Ibu kota kabupaten',
+                    'Taman Nasional Bunaken',
+                    'Selat Lembeh - Destinasi menyelam terkenal',
+                    'Gunung Klabat - Puncak tertinggi di Sulawesi Utara'
+                  ].map((item, index) => (
+                    <View key={index} style={styles.locationItem}>
                       <View style={styles.locationBullet} />
-                      <Text style={styles.locationText}>Airmadidi - The capital city</Text>
+                      <Text style={styles.keyLocation}>{item}</Text>
                     </View>
-                    <View style={styles.locationItem}>
-                      <View style={styles.locationBullet} />
-                      <Text style={styles.locationText}>Bunaken National Marine Park</Text>
-                    </View>
-                    <View style={styles.locationItem}>
-                      <View style={styles.locationBullet} />
-                      <Text style={styles.locationText}>Lembeh Strait - Famous diving destination</Text>
-                    </View>
-                    <View style={styles.locationItem}>
-                      <View style={styles.locationBullet} />
-                      <Text style={styles.locationText}>Mount Klabat - The highest peak in North Sulawesi</Text>
-                    </View>
-                  </View>
+                  ))}
                 </View>
-              </BlurView>
+              </View>
             </Animated.View>
             
-            {/* Culture Transition */}
+            {/* Culture Section */}
             <Animated.View 
               style={[
+                styles.card,
                 { opacity: fadeAnim, transform: [{ translateY: Animated.multiply(slideAnim, 1.6) }] }
               ]}
             >
-              <BlurView intensity={90} tint="dark" style={styles.transitionCard}>
-                <LinearGradient
-                  colors={['rgba(52, 152, 219, 0.8)', 'rgba(155, 89, 182, 0.8)']}
-                  start={{x: 0, y: 0}}
-                  end={{x: 1, y: 0}}
-                  style={styles.gradientBg}
-                />
-                <View style={styles.transitionContent}>
-                  <Ionicons name="heart" size={32} color="#fff" style={styles.transitionIcon} />
-                  <Text style={styles.transitionTitle}>Discover the Rich Cultural Heritage</Text>
-                  <Text style={styles.transitionText}>
-                    The unique geography and history of North Minahasa have shaped its distinct cultural identity.
-                    Let's explore the traditions that make this region special...
-                  </Text>
+              <View style={styles.cardHeader}>
+                <View style={styles.cardIconContainer}>
+                  <Feather name="users" size={18} color="#333" />
                 </View>
-              </BlurView>
-            </Animated.View>
-            
-            {/* Culture Card */}
-            <Animated.View 
-              style={[
-                styles.sectionContainer,
-                { opacity: fadeAnim, transform: [{ translateY: Animated.multiply(slideAnim, 1.8) }] }
-              ]}
-            >
-              <View style={styles.sectionTitleRow}>
-                <Ionicons name="people-outline" size={22} color="#fff" />
-                <Text style={styles.sectionTitle}>Culture</Text>
+                <Text style={styles.cardTitle}>Budaya</Text>
               </View>
               
-              <BlurView intensity={55} tint="light" style={styles.glassCard}>
-                <View style={styles.cardContent}>
-                  <View style={styles.cultureSectionRow}>
-                    <View style={styles.cultureSectionIcon}>
-                      <Ionicons name="musical-notes" size={24} color="#e74c3c" />
-                    </View>
-                    <View style={styles.cultureSectionContent}>
-                      <Text style={styles.subheading}>Traditional Dances</Text>
-                      <Text style={styles.paragraph}>
-                        The Minahasan people are known for their vibrant traditional dances such as the Kabasaran war dance,
-                        Maengket harvest dance, and Cakalele performed during celebrations.
-                      </Text>
-                    </View>
+              <View style={styles.cardBody}>
+                <View style={styles.cultureSection}>
+                  <View style={styles.cultureSectionHeader}>
+                    <Feather name="music" size={18} color="#555" />
+                    <Text style={styles.cultureSectionTitle}>Tarian Tradisional</Text>
                   </View>
-                  
-                  <View style={styles.animatedDivider} />
-                  
-                  <View style={styles.cultureSectionRow}>
-                    <View style={styles.cultureSectionIcon}>
-                      <Ionicons name="restaurant" size={24} color="#e74c3c" />
-                    </View>
-                    <View style={styles.cultureSectionContent}>
-                      <Text style={styles.subheading}>Cuisine</Text>
-                      <Text style={styles.paragraph}>
-                        North Minahasa is famous for its unique and flavorful cuisine. Popular dishes include Tinutuan (Manado porridge),
-                        Woku (spicy seafood or chicken dish), and traditional delicacies.
-                      </Text>
-                    </View>
-                  </View>
-                  
-                  <View style={styles.animatedDivider} />
-                  
-                  <View style={styles.cultureSectionRow}>
-                    <View style={styles.cultureSectionIcon}>
-                      <Ionicons name="musical-note" size={24} color="#e74c3c" />
-                    </View>
-                    <View style={styles.cultureSectionContent}>
-                      <Text style={styles.subheading}>Traditional Music</Text>
-                      <Text style={styles.paragraph}>
-                        Kolintang, a wooden percussion instrument, is an important part of Minahasan cultural identity.
-                        Music plays a significant role in ceremonies, celebrations, and daily life.
-                      </Text>
-                    </View>
-                  </View>
+                  <Text style={styles.paragraph}>
+                    Masyarakat Minahasa dikenal dengan tarian tradisional yang dinamis seperti tari perang Kabasaran,
+                    tari panen Maengket, dan Cakalele yang ditampilkan selama perayaan.
+                  </Text>
                 </View>
-              </BlurView>
+                
+                <View style={styles.divider} />
+                
+                <View style={styles.cultureSection}>
+                  <View style={styles.cultureSectionHeader}>
+                    <Feather name="coffee" size={18} color="#555" />
+                    <Text style={styles.cultureSectionTitle}>Kuliner</Text>
+                  </View>
+                  <Text style={styles.paragraph}>
+                    Minahasa Utara terkenal dengan masakan unik dan lezat. Hidangan populer termasuk Tinutuan (bubur Manado),
+                    Woku (hidangan seafood atau ayam pedas), dan makanan tradisional lainnya.
+                  </Text>
+                </View>
+                
+                <View style={styles.divider} />
+                
+                <View style={styles.cultureSection}>
+                  <View style={styles.cultureSectionHeader}>
+                    <Feather name="speaker" size={18} color="#555" />
+                    <Text style={styles.cultureSectionTitle}>Musik Tradisional</Text>
+                  </View>
+                  <Text style={styles.paragraph}>
+                    Kolintang, alat musik perkusi kayu, adalah bagian penting dari identitas budaya Minahasa.
+                    Musik memainkan peran signifikan dalam upacara, perayaan, dan kehidupan sehari-hari.
+                  </Text>
+                </View>
+              </View>
             </Animated.View>
           </View>
           
-          {/* Footer */}
+          {/* Footer Button */}
           <Animated.View 
             style={[
-              { opacity: fadeAnim, transform: [{ translateY: Animated.multiply(slideAnim, 2) }] }
+              styles.footerContainer, 
+              { opacity: fadeAnim, transform: [{ translateY: Animated.multiply(slideAnim, 1.8) }] }
             ]}
           >
-            <BlurView intensity={90} tint="dark" style={styles.footer}>
-              <LinearGradient
-                colors={['rgba(44, 62, 80, 0.9)', 'rgba(52, 73, 94, 0.9)']}
-                style={styles.footerGradient}
-              />
-              <Text style={styles.footerText}>Explore more about North Minahasa</Text>
-              <TouchableOpacity style={styles.button}>
-                <LinearGradient
-                  colors={['#e74c3c', '#c0392b']}
-                  start={{x: 0, y: 0}}
-                  end={{x: 1, y: 0}}
-                  style={styles.buttonGradient}
-                >
-                  <Text style={styles.buttonText}>Learn More</Text>
-                  <Ionicons name="arrow-forward" size={16} color="#fff" style={styles.buttonIcon} />
-                </LinearGradient>
-              </TouchableOpacity>
-            </BlurView>
+            <TouchableOpacity style={styles.button}>
+              <Text style={styles.buttonText}>Jelajahi Minahasa Utara</Text>
+              <Feather name="arrow-right" size={18} color="#00000" style={styles.buttonIcon} />
+            </TouchableOpacity>
           </Animated.View>
         </ScrollView>
       </ImageBackground>
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#000',
+    paddingTop: RNStatusBar.currentHeight || 0,
   },
   backgroundImage: {
     flex: 1,
-    width: '100%',
-    height: '100%',
+  },
+  backgroundImageStyle: {
+    opacity: 0.8,
   },
   gradientOverlay: {
     position: 'absolute',
     left: 0,
     right: 0,
     top: 0,
-    height: height * 0.15,
+    bottom: 0,
   },
   scrollContent: {
-    paddingBottom: 30,
+    paddingBottom: 32,
   },
-  floatingHeader: {
-    marginTop: 45,
-    marginHorizontal: 20,
-    borderRadius: 25,
-    overflow: 'hidden',
-    elevation: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.3,
-    shadowRadius: 20,
+  header: {
+    paddingTop: 20,
+    paddingHorizontal: SPACING * 2,
+    marginBottom: SPACING * 2,
   },
-  headerBlur: {
-    borderRadius: 25,
-    overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.2)',
-  },
-  headerContent: {
-    padding: 20,
+  locationRow: {
     flexDirection: 'row',
     alignItems: 'center',
   },
-  headerIconContainer: {
-    width: 45,
-    height: 45,
-    borderRadius: 15,
-    backgroundColor: 'rgba(231, 76, 60, 0.9)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 15,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
-    elevation: 5,
+  locationPin: {
+    marginRight: 6,
   },
-  headerTextContainer: {
-    flex: 1,
+  locationText: {
+    color: 'white',
+    fontSize: 15,
+    fontFamily: 'Gabarito-Regular',
   },
-  headerTitle: {
-    fontSize: 22,
-    fontWeight: '700',
+  keyLocation: {
+    color: 'black',
+    fontSize: 15,
+    fontFamily: 'Gabarito-Regular',
+  },
+  pageTitle: {
+    fontSize: 38,
     color: '#ffffff',
-    marginBottom: 4,
-    textShadowColor: 'rgba(0, 0, 0, 0.3)',
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 3,
-  },
-  headerSubtitle: {
-    fontSize: 14,
-    color: 'rgba(255, 255, 255, 0.8)',
-    fontStyle: 'italic',
+    marginTop: SPACING,
+    marginBottom: SPACING,
+    fontFamily: 'Gabarito-Bold',
   },
   contentContainer: {
-    paddingTop: 20,
-    paddingHorizontal: 20,
+    paddingHorizontal: SPACING * 1.5,
   },
-  sectionContainer: {
-    marginBottom: 25,
+  card: {
+    backgroundColor: '#ffffff',
+    borderRadius: 16,
+    marginBottom: SPACING * 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
+    elevation: 5,
+    overflow: 'hidden',
   },
-  sectionTitleRow: {
+  cardHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 12,
-    paddingHorizontal: 5,
+    paddingHorizontal: SPACING * 1.5,
+    paddingVertical: SPACING,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(0,0,0,0.05)',
   },
-  sectionTitle: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#ffffff',
-    marginLeft: 8,
-    textShadowColor: 'rgba(0, 0, 0, 0.6)',
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 3,
+  cardIconContainer: {
+    width: 32,
+    height: 32,
+    borderRadius: 8,
+    backgroundColor: 'rgba(0,0,0,0.05)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 10,
   },
-  glassCard: {
-    borderRadius: 20,
-    overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.3)',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 5 },
-    shadowOpacity: 0.15,
-    shadowRadius: 15,
-    elevation: 8,
-  },
-  cardContent: {
-    padding: 20,
+  cardTitle: {
+    fontSize: 18,
+    color: '#333',
+    fontFamily: 'Gabarito-SemiBold',
   },
   cardImage: {
     width: '100%',
-    height: 150,
-    borderRadius: 15,
-    marginBottom: 15,
+    height: 180,
+  },
+  cardBody: {
+    padding: SPACING * 1.5,
   },
   paragraph: {
     fontSize: 15,
-    lineHeight: 24,
-    color: '#333',
-    marginBottom: 12,
-  },
-  mapContainer: {
-    alignItems: 'center',
-    marginBottom: 15,
-  },
-  mapPlaceholder: {
-    width: '100%',
-    height: 170,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 15,
-    overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.2)',
-  },
-  mapPlaceholderText: {
-    fontSize: 15,
-    color: 'rgba(0,0,0,0.6)',
-    fontWeight: '500',
-    marginTop: 8,
-  },
-  caption: {
-    fontSize: 14,
-    color: '#555',
-    fontStyle: 'italic',
-    textAlign: 'center',
-    marginBottom: 10,
+    lineHeight: 22,
+    color: '#505050',
+    marginBottom: SPACING,
+    fontFamily: 'Gabarito-Regular',
+    textAlign: 'justify',
   },
   subheading: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#2c3e50',
-    marginVertical: 10,
-  },
-  locationList: {
-    marginTop: 5,
-  },
-  locationItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  locationBullet: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: '#e74c3c',
-    marginRight: 10,
-  },
-  locationText: {
-    fontSize: 15,
+    fontSize: 16,
     color: '#333',
-    flex: 1,
+    marginBottom: SPACING,
+    fontFamily: 'Gabarito-SemiBold',
   },
   divider: {
     height: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.1)',
-    marginVertical: 12,
+    backgroundColor: 'rgba(0,0,0,0.05)',
+    marginVertical: SPACING * 1.5,
+  },
+  locationList: {
+    marginTop: SPACING / 2,
+  },
+  locationItem: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: SPACING * 0.75,
+  },
+  locationBullet: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: '#3498db',
+    marginTop: 8,
+    marginRight: 8,
+  },
+  mapContainer: {
     width: '100%',
+    height: 250,
+    position: 'relative',
   },
-  animatedDivider: {
-    height: 1,
-    marginVertical: 18,
+  map: {
     width: '100%',
-    backgroundColor: 'rgba(0, 0, 0, 0.06)',
+    height: 200,
+    backgroundColor: '#f5f5f5',
   },
-  transitionCard: {
-    borderRadius: 22,
-    overflow: 'hidden',
-    marginVertical: 15,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.3)',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.3,
-    shadowRadius: 15,
-    elevation: 10,
+  mapLegend: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    paddingVertical: 8,
+    backgroundColor: 'rgba(255,255,255,0.9)',
   },
-  gradientBg: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
-  },
-  transitionContent: {
-    padding: 22,
+  legendItem: {
+    flexDirection: 'row',
     alignItems: 'center',
   },
-  transitionIcon: {
-    marginBottom: 10,
+  legendDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    marginRight: 4,
   },
-  transitionTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#ffffff',
-    marginBottom: 10,
-    textAlign: 'center',
-    textShadowColor: 'rgba(0, 0, 0, 0.3)',
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 2,
+  legendText: {
+    fontSize: 12,
+    color: '#333',
+    fontFamily: 'Gabarito-Regular',
   },
-  transitionText: {
-    fontSize: 15,
-    color: 'rgba(255, 255, 255, 0.9)',
-    textAlign: 'center',
-    lineHeight: 22,
-  },
-  cultureSectionRow: {
-    flexDirection: 'row',
-  },
-  cultureSectionIcon: {
-    marginRight: 15,
-    width: 40,
-    height: 40,
-    borderRadius: 12,
-    backgroundColor: 'rgba(231, 76, 60, 0.1)',
+  mapPlaceholder: {
+    width: '100%',
+    height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.03)',
   },
-  cultureSectionContent: {
-    flex: 1,
+  mapPlaceholderText: {
+    marginTop: 8,
+    fontSize: 14,
+    color: 'rgba(0,0,0,0.4)',
   },
-  footer: {
-    marginTop: 15,
-    borderTopLeftRadius: 30,
-    borderTopRightRadius: 30,
-    overflow: 'hidden',
-    borderWidth: 1,
-    borderBottomWidth: 0,
-    borderColor: 'rgba(255, 255, 255, 0.2)',
+  cultureSection: {
+    marginBottom: SPACING,
   },
-  footerGradient: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
+  cultureSectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: SPACING / 2,
   },
-  footerText: {
-    fontSize: 18,
-    color: '#ffffff',
-    textAlign: 'center',
-    marginVertical: 22,
-    fontWeight: '500',
+  cultureSectionTitle: {
+    fontSize: 16,
+    color: '#333',
+    marginLeft: 8,
+    fontFamily: 'Gabarito-SemiBold',
+  },
+  footerContainer: {
+    alignItems: 'center',
+    marginTop: SPACING,
+    paddingHorizontal: SPACING * 2,
   },
   button: {
-    marginBottom: 25,
-    width: 160,
-    alignSelf: 'center',
-    borderRadius: 25,
-    overflow: 'hidden',
-    elevation: 5,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25,
-    shadowRadius: 5,
-  },
-  buttonGradient: {
-    paddingVertical: 14,
-    paddingHorizontal: 20,
+    backgroundColor: '#ffffff',
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    borderRadius: 12,
     flexDirection: 'row',
-    justifyContent: 'center',
     alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
   },
   buttonText: {
-    color: '#ffffff',
+    color: 'black',
     fontSize: 16,
-    fontWeight: 'bold',
-    marginRight: 6,
+    fontFamily: 'Gabarito-SemiBold',
   },
   buttonIcon: {
-    marginTop: 1,
+    marginLeft: 8,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
