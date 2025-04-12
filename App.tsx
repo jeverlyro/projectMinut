@@ -6,6 +6,8 @@ import HomePage from './screens/homePage';
 import ExploreScreen from './screens/explorePage';
 import ProfileScreen from './screens/profilePage';
 import BottomNavbar from './components/bottomNavbar';
+import SignInScreen from './screens/signinPage'; 
+import SignUpScreen from './screens/signupPage';
 
 const loadFonts = () => {
   return Font.loadAsync({
@@ -16,7 +18,7 @@ const loadFonts = () => {
 };
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState('Home');
+  const [activeTab, setActiveTab] = useState('SignIn');
   const [fontsLoaded, setFontsLoaded] = useState(false);
 
   useEffect(() => {
@@ -43,12 +45,17 @@ export default function App() {
 
   const renderScreen = () => {
     switch (activeTab) {
+      case 'SignIn':
+        return <SignInScreen />;
+      case 'SignUp':
+        return <SignUpScreen />;
       case 'Home':
         return <HomePage />;
       case 'Explore':
         return <ExploreScreen />;
       case 'Profile':
         return <ProfileScreen />;
+     
       default:
         return <HomePage />;
     }
