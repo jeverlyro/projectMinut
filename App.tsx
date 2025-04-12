@@ -1,13 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, SafeAreaView, StatusBar as RNStatusBar } from 'react-native';
+import { StyleSheet, View, SafeAreaView, StatusBar as RNStatusBar, ActivityIndicator } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import * as Font from 'expo-font';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+
 import HomePage from './screens/homePage';
 import ExploreScreen from './screens/explorePage';
 import ProfileScreen from './screens/profilePage';
-import BottomNavbar from './components/bottomNavbar';
-import SignInScreen from './screens/signinPage'; 
+import SignInScreen from './screens/signinPage';
 import SignUpScreen from './screens/signupPage';
+import BottomNavbar from './components/bottomNavbar';
+
+const Stack = createStackNavigator();
 
 const loadFonts = () => {
   return Font.loadAsync({
@@ -17,8 +22,38 @@ const loadFonts = () => {
   });
 };
 
+const MainAppScreen = () => {
+  const [activeScreen, setActiveScreen] = useState('Home');
+  
+  const renderScreen = () => {
+    switch(activeScreen) {
+      case 'Home':
+        return <HomePage />;
+      case 'Explore':
+        return <ExploreScreen />;
+      case 'Profile':
+        return <ProfileScreen />;
+      default:
+        return <HomePage />;
+    }
+  };
+  
+  const handleTabChange = (tabName: string) => {
+    setActiveScreen(tabName);
+  };
+  
+  return (
+    <View style={{ flex: 1 }}>
+      {renderScreen()}
+      <BottomNavbar 
+        activeTab={activeScreen} 
+        onChangeTab={handleTabChange} 
+      />
+    </View>
+  );
+};
+
 export default function App() {
-  const [activeTab, setActiveTab] = useState('SignIn');
   const [fontsLoaded, setFontsLoaded] = useState(false);
 
   useEffect(() => {
@@ -38,36 +73,33 @@ export default function App() {
   if (!fontsLoaded) {
     return (
       <View style={styles.loadingContainer}>
-        {/* We could add a loading indicator here */}
+        <ActivityIndicator size="large" color="#6200EE" />
       </View>
     );
   }
 
-  const renderScreen = () => {
-    switch (activeTab) {
-      case 'SignIn':
-        return <SignInScreen />;
-      case 'SignUp':
-        return <SignUpScreen />;
-      case 'Home':
-        return <HomePage />;
-      case 'Explore':
-        return <ExploreScreen />;
-      case 'Profile':
-        return <ProfileScreen />;
-     
-      default:
-        return <HomePage />;
-    }
-  };
-
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="auto" />
-      <View style={styles.screenContainer}>
-        {renderScreen()}
-      </View>
-      <BottomNavbar activeTab={activeTab} onChangeTab={setActiveTab} />
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName="SignIn">
+          <Stack.Screen 
+            name="SignIn" 
+            component={SignInScreen} 
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen 
+            name="SignUp" 
+            component={SignUpScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen 
+            name="MainApp" 
+            component={MainAppScreen}
+            options={{ headerShown: false }}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
     </SafeAreaView>
   );
 }
@@ -81,8 +113,5 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  screenContainer: {
-    flex: 1,
   },
 });

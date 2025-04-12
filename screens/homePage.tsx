@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef } from 'react';
 import {
   View,
   Text,
@@ -14,10 +14,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useFonts, Gabarito_400Regular, Gabarito_500Medium, Gabarito_600SemiBold, Gabarito_700Bold } from '@expo-google-fonts/gabarito';
-import * as SplashScreen from 'expo-splash-screen';
-
-SplashScreen.preventAutoHideAsync();
+import { Gabarito_400Regular, Gabarito_500Medium, Gabarito_600SemiBold, Gabarito_700Bold } from '@expo-google-fonts/gabarito';
 
 const HISTORY_DATA = [
   {
@@ -82,34 +79,13 @@ const LOCAL_FOODS = [
 const { width } = Dimensions.get('window');
 
 const NorthMinahasa = () => {
-  const scrollY = new Animated.Value(0);
-  const scrollRef = useRef(null);
-
-  const [fontsLoaded] = useFonts({
+  
+   ({
     GabaritoRegular: Gabarito_400Regular,
     GabaritoMedium: Gabarito_500Medium,
     GabaritoSemiBold: Gabarito_600SemiBold,
     GabaritoBold: Gabarito_700Bold,
   });
-
-  useEffect(() => {
-    async function prepare() {
-      if (fontsLoaded) {
-        await SplashScreen.hideAsync();
-      }
-    }
-    prepare();
-  }, [fontsLoaded]);
-
-  const navOpacity = scrollY.interpolate({
-    inputRange: [0, 100, 150],
-    outputRange: [0, 0.5, 1],
-    extrapolate: 'clamp',
-  });
-
-  if (!fontsLoaded) {
-    return null;
-  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -134,9 +110,7 @@ const NorthMinahasa = () => {
         </ImageBackground>
       </View>
 
-      {/* Main Content */}
       <ScrollView>
-        {/* Overview Section */}
         <View style={styles.contentSection}>
           <View style={styles.sectionHeader}>
             <View style={styles.sectionHeaderLeft}>
@@ -170,7 +144,6 @@ const NorthMinahasa = () => {
           </View>
         </View>
         
-        {/* History Timeline Section */}
         <View style={styles.contentSection}>
           <View style={styles.sectionHeader}>
             <View style={styles.sectionHeaderLeft}>
@@ -228,7 +201,6 @@ const NorthMinahasa = () => {
           </ScrollView>
         </View>
         
-        {/* Interactive Map Section */}
         <View style={styles.contentSection}>
           <View style={styles.sectionHeader}>
             <View style={styles.sectionHeaderLeft}>
@@ -248,7 +220,6 @@ const NorthMinahasa = () => {
               <Text style={styles.mapSubtitle}>10 kecamatan • 125 desa</Text>
             </View>
             
-            {/* Map Markers */}
             <View style={[styles.mapMarker, { top: '30%', left: '25%' }]}>
               <View style={[styles.markerDot, {backgroundColor: '#3498db'}]} />
               <View style={styles.markerLabel}>
@@ -313,7 +284,6 @@ const NorthMinahasa = () => {
           </View>
         </View>
         
-        {/* Tourism Section */}
         <View style={styles.contentSection}>
           <View style={styles.sectionHeader}>
             <View style={styles.sectionHeaderLeft}>
@@ -339,7 +309,6 @@ const NorthMinahasa = () => {
           </View>
         </View>
         
-        {/* Traditional Arts Section */}
         <View style={styles.contentSection}>
           <View style={styles.sectionHeader}>
             <View style={styles.sectionHeaderLeft}>
