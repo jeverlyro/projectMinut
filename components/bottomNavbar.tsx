@@ -39,7 +39,6 @@ const BottomNavbar = ({ activeTab, onChangeTab }: NavbarProps) => {
             >
               {tab.name}
             </Text>
-            {activeTab === tab.name && <View style={styles.activeIndicator} />}
           </View>
         </TouchableOpacity>
       ))}
@@ -74,14 +73,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginTop: 4,
     fontFamily: 'Gabarito-Regular',
-  },
-  activeIndicator: {
-    position: 'absolute',
-    top: -5,
-    width: 4,
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: '#3498db',
   }
 });
 
