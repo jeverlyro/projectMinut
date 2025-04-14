@@ -10,7 +10,10 @@ import {
   FlatList, 
   Image,
   Platform,
-  UIManager
+  UIManager,
+  Modal,
+  Dimensions,
+  Pressable
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -205,6 +208,8 @@ const ExploreScreen = () => {
   const [activeTab, setActiveTab] = useState('All');
   const [activeMainCategory, setActiveMainCategory] = useState('All');
   const [filteredItems, setFilteredItems] = useState(culturalItems);
+  const [selectedItem, setSelectedItem] = useState<CulturalItem | null>(null);
+  const [modalVisible, setModalVisible] = useState(false);
   
   useEffect(() => {
     const items = culturalItems.filter(item => {
@@ -236,12 +241,18 @@ const ExploreScreen = () => {
     setActiveTab(tab);
   };
 
+  const handleItemPress = (item: CulturalItem) => {
+    setSelectedItem(item);
+    setModalVisible(true);
+  };
+
   const renderCultureItem = ({ item }: { item: CulturalItem }) => {
     return (
       <View>
         <TouchableOpacity 
           style={styles.itemCard}
           activeOpacity={0.7}
+          onPress={() => handleItemPress(item)}
         >
           <Image source={item.image} style={styles.itemImage} />
           <View style={styles.itemContent}>
@@ -289,13 +300,13 @@ const ExploreScreen = () => {
           
           {/* Main categories */}
           <TouchableOpacity 
-            style={[styles.tab, activeMainCategory === 'Wisata' && styles.activeTab, styles.wisataTab]} 
+            style={[styles.tab, activeMainCategory === 'Wisata' && styles.activeTab]} 
             onPress={() => handleMainTabChange('Wisata')}>
             <Text style={[styles.tabText, activeMainCategory === 'Wisata' && styles.activeTabText]}>Wisata</Text>
           </TouchableOpacity>
           
           <TouchableOpacity 
-            style={[styles.tab, activeMainCategory === 'Budaya' && styles.activeTab, styles.budayaTab]} 
+            style={[styles.tab, activeMainCategory === 'Budaya' && styles.activeTab]} 
             onPress={() => handleMainTabChange('Budaya')}>
             <Text style={[styles.tabText, activeMainCategory === 'Budaya' && styles.activeTabText]}>Budaya</Text>
           </TouchableOpacity>
@@ -341,6 +352,73 @@ const ExploreScreen = () => {
           </View>
         }
       />
+
+      {/* Item Detail Modal */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          setModalVisible(false);
+        }}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>{selectedItem?.name}</Text>
+              <TouchableOpacity 
+                style={styles.closeButton} 
+                onPress={() => setModalVisible(false)}
+              >
+                <Ionicons name="close" size={24} color="#252129" />
+              </TouchableOpacity>
+            </View>
+            
+            <ScrollView style={styles.modalContent} showsVerticalScrollIndicator={false}>
+              <Image 
+                source={selectedItem?.image} 
+                style={styles.modalImage} 
+                resizeMode="cover"
+              />
+              
+              <View style={styles.modalBadgeContainer}>
+                <View style={[
+                  styles.badge, 
+                  selectedItem?.type === 'Wisata' ? styles.wisataBadge : styles.budayaBadge
+                ]}>
+                  <Text style={styles.itemType}>{selectedItem?.type}</Text>
+                </View>
+                <View style={[styles.badge, styles.categoryBadge]}>
+                  <Text style={styles.categoryType}>{selectedItem?.category}</Text>
+                </View>
+              </View>
+              
+              <Text style={styles.modalDescription}>
+                {selectedItem?.description}
+              </Text>
+              
+              {/* You can add more details here as needed */}
+              <View style={styles.modalAction}>
+                <TouchableOpacity 
+                  style={styles.actionButton}
+                  activeOpacity={0.8}
+                >
+                  <Ionicons name="bookmark-outline" size={20} color="#fff" style={styles.actionIcon} />
+                  <Text style={styles.actionText}>Simpan</Text>
+                </TouchableOpacity>
+                
+                <TouchableOpacity 
+                  style={styles.actionButton}
+                  activeOpacity={0.8}
+                >
+                  <Ionicons name="share-social-outline" size={20} color="#fff" style={styles.actionIcon} />
+                  <Text style={styles.actionText}>Bagikan</Text>
+                </TouchableOpacity>
+              </View>
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 };
@@ -396,17 +474,11 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     backgroundColor: '#f0f0f0',
   },
-  wisataTab: {
-    backgroundColor: '#e3f2fd',
-  },
-  budayaTab: {
-    backgroundColor: '#fce4ec',
-  },
   activeTab: {
     backgroundColor: '#252129',
   },
   tabText: {
-    fontFamily: 'Gabarito-Medium',
+    fontFamily: 'Gabarito-Regular',
     fontSize: 14,
     color: '#666',
   },
@@ -434,11 +506,11 @@ const styles = StyleSheet.create({
   subTabText: {
     fontFamily: 'Gabarito-Regular',
     fontSize: 13,
-    color: '#777',
+    color: '#000',
   },
   activeSubTabText: {
-    color: '#252129',
-    fontFamily: 'Gabarito-Medium',
+    color: '#000',
+    fontFamily: 'Gabarito-SemiBold',
   },
   listContainer: {
     padding: 16,
@@ -488,16 +560,16 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   wisataBadge: {
-    backgroundColor: '#e3f2fd',
+    backgroundColor: '#f1f1ff',
   },
   budayaBadge: {
-    backgroundColor: '#fce4ec',
+    backgroundColor: '#f1f1ff',
   },
   categoryBadge: {
     backgroundColor: '#f5f5f5',
   },
   itemType: {
-    fontFamily: 'Gabarito-Medium',
+    fontFamily: 'Gabarito-Regular',
     fontSize: 13,
     color: '#252129',
   },
@@ -525,6 +597,86 @@ const styles = StyleSheet.create({
     fontFamily: 'Gabarito-Regular',
     fontSize: 16,
     color: '#999',
+  },
+  // Modal styles
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'flex-end',
+  },
+  modalContainer: {
+    backgroundColor: 'white',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    height: '80%', // Takes 80% of screen height
+    padding: 20,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: -3,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 15,
+  },
+  modalTitle: {
+    fontFamily: 'Gabarito-Bold',
+    fontSize: 24,
+    color: '#252129',
+    flex: 1,
+  },
+  closeButton: {
+    padding: 5,
+  },
+  modalContent: {
+    flex: 1,
+  },
+  modalImage: {
+    width: '100%',
+    height: 200,
+    borderRadius: 16,
+    marginBottom: 16,
+  },
+  modalBadgeContainer: {
+    flexDirection: 'row',
+    marginBottom: 12,
+  },
+  modalDescription: {
+    fontFamily: 'Gabarito-Regular',
+    fontSize: 16,
+    color: '#444',
+    lineHeight: 24,
+    marginBottom: 20,
+  },
+  modalAction: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 20,
+    marginBottom: 30,
+  },
+  actionButton: {
+    backgroundColor: '#252129',
+    borderRadius: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flex: 0.48,
+  },
+  actionIcon: {
+    marginRight: 8,
+  },
+  actionText: {
+    color: '#fff',
+    fontFamily: 'Gabarito-SemiBold',
+    fontSize: 16,
   },
 });
 
