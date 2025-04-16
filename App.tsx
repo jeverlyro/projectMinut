@@ -4,15 +4,35 @@ import { StatusBar } from 'expo-status-bar';
 import * as Font from 'expo-font';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import { SavedItemsProvider } from './services/SavedItemsContext';
 
-import HomePage from './screens/homePage';
-import ExploreScreen from './screens/explorePage';
-import ProfileScreen from './screens/profilePage';
-import SignInScreen from './screens/signinPage';
-import SignUpScreen from './screens/signupPage';
+import HomePage from './screens/main/homePage';
+import ExploreScreen from './screens/main/explorePage';
+import ProfileScreen from './screens/profileScreens/profilePage';
+import SignInScreen from './screens/authScreens/signinPage';
+import SignUpScreen from './screens/authScreens/signupPage';
+import OtpVerificationScreen from './screens/authScreens/OtpVerificationScreen';
 import BottomNavbar from './components/bottomNavbar';
+import SavedItemsScreen from './screens/profileScreens/savedItemsScreen';
+import ProfileDetailsScreen from './screens/profileScreens/profileDetailsPage';
+import SettingsScreen from './screens/settingScreens/settingsPage';
+import EditProfileScreen from './screens/profileScreens/editProfileScreen';
+import ChangePasswordScreen from './screens/settingScreens/changePasswordScreen';
 
-const Stack = createStackNavigator();
+// Define the type for the navigation stack parameters
+type RootStackParamList = {
+  SignIn: undefined;
+  SignUp: undefined;
+  OtpVerification: { email: string; userId: string };
+  MainApp: undefined;
+  SavedItems: undefined;
+  ProfileDetails: undefined;
+  Settings: undefined;
+  EditProfile: undefined;
+  ChangePassword: undefined;
+};
+
+const Stack = createStackNavigator<RootStackParamList>();
 
 const loadFonts = () => {
   return Font.loadAsync({
@@ -79,28 +99,62 @@ export default function App() {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar style="auto" />
-      <NavigationContainer>
-        <Stack.Navigator initialRouteName="SignIn">
-          <Stack.Screen 
-            name="SignIn" 
-            component={SignInScreen} 
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen 
-            name="SignUp" 
-            component={SignUpScreen}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen 
-            name="MainApp" 
-            component={MainAppScreen}
-            options={{ headerShown: false }}
-          />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </SafeAreaView>
+    <SavedItemsProvider>
+      <SafeAreaView style={styles.container}>
+        <StatusBar style="auto" />
+        <NavigationContainer>
+          <Stack.Navigator initialRouteName="SignIn">
+            <Stack.Screen 
+              name="SignIn" 
+              component={SignInScreen} 
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen 
+              name="SignUp" 
+              component={SignUpScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen 
+              name="OtpVerification" 
+              component={OtpVerificationScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen 
+              name="MainApp" 
+              component={MainAppScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen 
+              name="SavedItems" 
+              component={SavedItemsScreen} 
+              options={{ 
+                headerShown: false 
+              }} 
+            />
+            <Stack.Screen 
+              name="ProfileDetails" 
+              component={ProfileDetailsScreen} 
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen 
+              name="Settings" 
+              component={SettingsScreen} 
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen 
+              name="EditProfile" 
+              component={EditProfileScreen} 
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen 
+              name="ChangePassword" 
+              component={ChangePasswordScreen} 
+              options={{ headerShown: false }}
+            />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </SafeAreaView>
+    </SavedItemsProvider>
   );
 }
 

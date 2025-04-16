@@ -5,7 +5,6 @@ import {
   View, 
   TextInput, 
   TouchableOpacity, 
-  Alert, 
   KeyboardAvoidingView,
   Platform,
   TouchableWithoutFeedback,
@@ -16,15 +15,24 @@ import {
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useFonts, Gabarito_400Regular, Gabarito_500Medium, Gabarito_600SemiBold, Gabarito_700Bold } from '@expo-google-fonts/gabarito';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { auth } from '../../services/api';
+import CustomNotification from '../../components/CustomNotification';
 
 type RootStackParamList = {
   SignIn: undefined;
   SignUp: undefined;
+  OtpVerification: { email: string; userId: string };
   MainApp: undefined;
 };
 
 type SignUpScreenProps = {
   navigation: StackNavigationProp<RootStackParamList, 'SignUp'>;
+};
+
+type NotificationData = {
+  visible: boolean;
+  type: 'success' | 'error' | 'info';
+  message: string;
 };
 
 const SignUpScreen: React.FC<SignUpScreenProps> = ({ navigation }) => {
@@ -41,6 +49,12 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ navigation }) => {
   const [passwordError, setPasswordError] = useState('');
   const [confirmPasswordError, setConfirmPasswordError] = useState('');
   
+  const [notification, setNotification] = useState<NotificationData>({
+    visible: false,
+    type: 'info',
+    message: '',
+  });
+  
   const [fontsLoaded] = useFonts({
     GabaritoRegular: Gabarito_400Regular,
     GabaritoMedium: Gabarito_500Medium,
@@ -52,41 +66,56 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ navigation }) => {
     return <ActivityIndicator size="large" color="#212529" />;
   }
   
+  const showNotification = (type: 'success' | 'error' | 'info', message: string) => {
+    setNotification({
+      visible: true,
+      type,
+      message,
+    });
+  };
+
+  const hideNotification = () => {
+    setNotification(prev => ({
+      ...prev,
+      visible: false,
+    }));
+  };
+  
   const validateForm = () => {
     let isValid = true;
     
     if (!name) {
-      setNameError('Name is required');
+      setNameError('Nama wajib diisi');
       isValid = false;
     } else {
       setNameError('');
     }
     
     if (!email) {
-      setEmailError('Email is required');
+      setEmailError('Email wajib diisi');
       isValid = false;
     } else if (!/\S+@\S+\.\S+/.test(email)) {
-      setEmailError('Please enter a valid email');
+      setEmailError('Harap masukkan email yang valid');
       isValid = false;
     } else {
       setEmailError('');
     }
     
     if (!password) {
-      setPasswordError('Password is required');
+      setPasswordError('Kata sandi wajib diisi');
       isValid = false;
     } else if (password.length < 6) {
-      setPasswordError('Password must be at least 6 characters');
+      setPasswordError('Kata sandi minimal 6 karakter');
       isValid = false;
     } else {
       setPasswordError('');
     }
     
     if (!confirmPassword) {
-      setConfirmPasswordError('Please confirm your password');
+      setConfirmPasswordError('Harap konfirmasi kata sandi Anda');
       isValid = false;
     } else if (password !== confirmPassword) {
-      setConfirmPasswordError('Passwords do not match');
+      setConfirmPasswordError('Kata sandi tidak cocok');
       isValid = false;
     } else {
       setConfirmPasswordError('');
@@ -101,25 +130,37 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ navigation }) => {
     setIsLoading(true);
     
     try {
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      // Send the user's name as the username parameter
+      console.log('Attempting to register with:', { name, email, password: '****' });
+      const response = await auth.register(name, email, password);
       
+      // Store the registered email to use in OTP verification
+      const registeredEmail = email;
+      
+      // Clear form fields
       setName('');
       setEmail('');
       setPassword('');
       setConfirmPassword('');
       
-      Alert.alert(
-        'Success',
-        'Account created successfully!',
-        [
-          { 
-            text: 'OK', 
-            onPress: () => navigation.replace('MainApp')
-          }
-        ]
-      );
-    } catch (error) {
-      Alert.alert('Error', 'Failed to create account. Please try again.');
+      showNotification('success', 'Pendaftaran berhasil! Kode OTP telah dikirim ke email Anda.');
+      
+      // Navigate to OTP verification screen after a short delay instead of SignIn
+      setTimeout(() => {
+        navigation.replace('OtpVerification', { 
+          email: registeredEmail, 
+          userId: response.userId 
+        });
+      }, 1500);
+    } catch (error: any) {
+      if (error.response?.data?.message) {
+        showNotification('error', error.response.data.message);
+      } else if (error.message && error.message.includes('Network Error')) {
+        showNotification('error', 'Koneksi ke server gagal. Pastikan backend berjalan dan dapat diakses.');
+      } else {
+        showNotification('error', 'Gagal membuat akun. Silakan coba lagi.');
+      }
+      console.log('Registration error:', error.response?.data || error.message);
     } finally {
       setIsLoading(false);
     }
@@ -135,13 +176,20 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ navigation }) => {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.container}
       >
+        <CustomNotification
+          visible={notification.visible}
+          type={notification.type}
+          message={notification.message}
+          onDismiss={hideNotification}
+        />
+        
         <ScrollView 
           showsVerticalScrollIndicator={false} 
           contentContainerStyle={styles.scrollContent}
         >
           <View style={styles.innerContainer}>
-            <Text style={styles.title}>Create Account</Text>
-            <Text style={styles.subtitle}>Join our community today</Text>
+            <Text style={styles.title}>Buat Akun</Text>
+            <Text style={styles.subtitle}>Silahkan membuat akun terlebih dahulu</Text>
 
             <View style={styles.formContainer}>
               <View style={styles.inputRow}>
@@ -150,7 +198,7 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ navigation }) => {
                     <Icon name="person-outline" size={18} color="#888" />
                     <TextInput
                       style={[styles.input, nameError ? styles.inputError : null]}
-                      placeholder="Full Name"
+                      placeholder="Nama Lengkap"
                       placeholderTextColor="#8a8a8a"
                       value={name}
                       onChangeText={(text) => {
@@ -190,7 +238,7 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ navigation }) => {
                     <Icon name="lock-closed-outline" size={18} color="#888" />
                     <TextInput
                       style={[styles.input, passwordError ? styles.inputError : null]}
-                      placeholder="Password"
+                      placeholder="Kata Sandi"
                       placeholderTextColor="#8a8a8a"
                       secureTextEntry={!showPassword}
                       value={password}
@@ -213,7 +261,7 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ navigation }) => {
                     <Icon name="shield-checkmark-outline" size={18} color="#888" />
                     <TextInput
                       style={[styles.input, confirmPasswordError ? styles.inputError : null]}
-                      placeholder="Confirm Password"
+                      placeholder="Konfirmasi Kata Sandi"
                       placeholderTextColor="#8a8a8a"
                       secureTextEntry={!showConfirmPassword}
                       value={confirmPassword}
@@ -239,14 +287,14 @@ const SignUpScreen: React.FC<SignUpScreenProps> = ({ navigation }) => {
               {isLoading ? (
                 <ActivityIndicator color="#fff" size="small" />
               ) : (
-                <Text style={styles.buttonText}>Create Account</Text>
+                <Text style={styles.buttonText}>Buat Akun</Text>
               )}
             </TouchableOpacity>
 
             <View style={styles.signinContainer}>
-              <Text style={styles.signinText}>Already have an account? </Text>
+              <Text style={styles.signinText}>Sudah punya akun? </Text>
               <TouchableOpacity onPress={handleSignInPress}>
-                <Text style={styles.signinLink}>Sign In</Text>
+                <Text style={styles.signinLink}>Masuk</Text>
               </TouchableOpacity>
             </View>
           </View>

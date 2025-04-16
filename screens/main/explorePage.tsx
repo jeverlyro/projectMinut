@@ -13,21 +13,15 @@ import {
   UIManager,
   Modal,
   Dimensions,
-  Pressable
+  Pressable,
+  ToastAndroid,
+  Alert
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useSavedItems, CulturalItem } from '../../services/SavedItemsContext';
 
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
-}
-
-interface CulturalItem {
-  id: string;
-  name: string;
-  type: string;
-  category: string;
-  image: { uri: string };
-  description: string;
 }
 
 const culturalItems: CulturalItem[] = [
@@ -211,6 +205,8 @@ const ExploreScreen = () => {
   const [selectedItem, setSelectedItem] = useState<CulturalItem | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   
+  const { savedItems, saveItem, removeItem, isItemSaved } = useSavedItems();
+  
   useEffect(() => {
     const items = culturalItems.filter(item => {
       const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -244,6 +240,28 @@ const ExploreScreen = () => {
   const handleItemPress = (item: CulturalItem) => {
     setSelectedItem(item);
     setModalVisible(true);
+  };
+
+  const handleSaveItem = async (item: CulturalItem) => {
+    try {
+      if (isItemSaved(item.id)) {
+        await removeItem(item.id);
+        if (Platform.OS === 'android') {
+          ToastAndroid.show('Item dihapus dari tersimpan', ToastAndroid.SHORT);
+        } else {
+          Alert.alert('Tersimpan', 'Item dihapus dari tersimpan');
+        }
+      } else {
+        await saveItem(item);
+        if (Platform.OS === 'android') {
+          ToastAndroid.show('Item berhasil disimpan', ToastAndroid.SHORT);
+        } else {
+          Alert.alert('Tersimpan', 'Item berhasil disimpan');
+        }
+      }
+    } catch (error) {
+      console.error('Error toggling save item:', error);
+    }
   };
 
   const renderCultureItem = ({ item }: { item: CulturalItem }) => {
@@ -397,14 +415,21 @@ const ExploreScreen = () => {
                 {selectedItem?.description}
               </Text>
               
-              {/* You can add more details here as needed */}
               <View style={styles.modalAction}>
                 <TouchableOpacity 
                   style={styles.actionButton}
                   activeOpacity={0.8}
+                  onPress={() => selectedItem && handleSaveItem(selectedItem)}
                 >
-                  <Ionicons name="bookmark-outline" size={20} color="#fff" style={styles.actionIcon} />
-                  <Text style={styles.actionText}>Simpan</Text>
+                  <Ionicons 
+                    name={selectedItem && isItemSaved(selectedItem.id) ? "bookmark" : "bookmark-outline"} 
+                    size={20} 
+                    color="#fff" 
+                    style={styles.actionIcon} 
+                  />
+                  <Text style={styles.actionText}>
+                    {selectedItem && isItemSaved(selectedItem.id) ? "Tersimpan" : "Simpan"}
+                  </Text>
                 </TouchableOpacity>
                 
                 <TouchableOpacity 

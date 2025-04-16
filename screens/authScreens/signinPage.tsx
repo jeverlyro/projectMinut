@@ -6,7 +6,6 @@ import {
   TextInput, 
   TouchableOpacity, 
   ActivityIndicator, 
-  Alert,
   KeyboardAvoidingView,
   Platform,
   TouchableWithoutFeedback,
@@ -14,6 +13,9 @@ import {
 } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useFonts, Gabarito_400Regular, Gabarito_500Medium, Gabarito_600SemiBold, Gabarito_700Bold } from '@expo-google-fonts/gabarito';
+import { auth } from '../../services/api';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import CustomNotification from '../../components/CustomNotification';
 
 type RootStackParamList = {
   SignIn: undefined;
@@ -25,12 +27,23 @@ type SignInScreenProps = {
   navigation: StackNavigationProp<RootStackParamList, 'SignIn'>;
 };
 
+type NotificationData = {
+  visible: boolean;
+  type: 'success' | 'error' | 'info';
+  message: string;
+};
+
 const SignIn: React.FC<SignInScreenProps> = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
+  const [notification, setNotification] = useState<NotificationData>({
+    visible: false,
+    type: 'info',
+    message: '',
+  });
   
   const [fontsLoaded] = useFonts({
       GabaritoRegular: Gabarito_400Regular,
@@ -43,24 +56,39 @@ const SignIn: React.FC<SignInScreenProps> = ({ navigation }) => {
     return <ActivityIndicator size="large" color="#212529" />;
   }
 
+  const showNotification = (type: 'success' | 'error' | 'info', message: string) => {
+    setNotification({
+      visible: true,
+      type,
+      message,
+    });
+  };
+
+  const hideNotification = () => {
+    setNotification(prev => ({
+      ...prev,
+      visible: false,
+    }));
+  };
+
   const validateForm = () => {
     let isValid = true;
     
     if (!email) {
-      setEmailError('Email is required');
+      setEmailError('Email wajib diisi');
       isValid = false;
     } else if (!/\S+@\S+\.\S+/.test(email)) {
-      setEmailError('Please enter a valid email');
+      setEmailError('Harap masukkan email yang valid');
       isValid = false;
     } else {
       setEmailError('');
     }
     
     if (!password) {
-      setPasswordError('Password is required');
+      setPasswordError('Kata sandi wajib diisi');
       isValid = false;
     } else if (password.length < 6) {
-      setPasswordError('Password must be at least 6 characters');
+      setPasswordError('Kata sandi minimal 6 karakter');
       isValid = false;
     } else {
       setPasswordError('');
@@ -75,14 +103,20 @@ const SignIn: React.FC<SignInScreenProps> = ({ navigation }) => {
     setIsLoading(true);
     
     try {
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      const response = await auth.login(email, password);
+      await AsyncStorage.setItem('token', response.token);
+      await AsyncStorage.setItem('user', JSON.stringify(response.user));
       
       setEmail('');
       setPassword('');
-
-      navigation.replace('MainApp');
-    } catch (error) {
-      Alert.alert('Error', 'Failed to sign in. Please try again.');
+      showNotification('success', 'Login berhasil!');
+      
+      // Give time for notification to show before navigating
+      setTimeout(() => {
+        navigation.replace('MainApp');
+      }, 1000);
+    } catch (error: any) {
+      showNotification('error', error.response?.data?.message || 'Gagal masuk. Silakan coba lagi.');
     } finally {
       setIsLoading(false);
     }
@@ -98,9 +132,16 @@ const SignIn: React.FC<SignInScreenProps> = ({ navigation }) => {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.container}
       >
+        <CustomNotification
+          visible={notification.visible}
+          type={notification.type}
+          message={notification.message}
+          onDismiss={hideNotification}
+        />
+        
         <View style={styles.innerContainer}>
-          <Text style={styles.title}>Welcome Back</Text>
-          <Text style={styles.subtitle}>Please sign in to continue</Text>
+          <Text style={styles.title}>Selamat Datang Kembali</Text>
+          <Text style={styles.subtitle}>Silakan masuk untuk melanjutkan</Text>
 
           <View style={styles.inputContainer}>
             <TextInput
@@ -121,7 +162,7 @@ const SignIn: React.FC<SignInScreenProps> = ({ navigation }) => {
           <View style={styles.inputContainer}>
             <TextInput
               style={[styles.input, passwordError ? styles.inputError : null]}
-              placeholder="Password"
+              placeholder="Kata Sandi"
               placeholderTextColor="#8a8a8a"
               secureTextEntry
               value={password}
@@ -133,8 +174,11 @@ const SignIn: React.FC<SignInScreenProps> = ({ navigation }) => {
             {passwordError ? <Text style={styles.errorText}>{passwordError}</Text> : null}
           </View>
 
-          <TouchableOpacity style={styles.forgotPassword}>
-            <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+          <TouchableOpacity 
+            style={styles.forgotPassword}
+            onPress={() => showNotification('info', 'Fitur reset kata sandi akan segera tersedia.')}
+          >
+            <Text style={styles.forgotPasswordText}>Lupa Kata Sandi?</Text>
           </TouchableOpacity>
 
           <TouchableOpacity 
@@ -145,14 +189,14 @@ const SignIn: React.FC<SignInScreenProps> = ({ navigation }) => {
             {isLoading ? (
               <ActivityIndicator color="#fff" size="small" />
             ) : (
-              <Text style={styles.buttonText}>Sign In</Text>
+              <Text style={styles.buttonText}>Masuk</Text>
             )}
           </TouchableOpacity>
           
           <View style={styles.signupContainer}>
-            <Text style={styles.signupText}>Don't have an account? </Text>
+            <Text style={styles.signupText}>Belum punya akun? </Text>
             <TouchableOpacity onPress={handleSignUpPress}>
-              <Text style={styles.signupLink}>Sign Up</Text>
+              <Text style={styles.signupLink}>Daftar</Text>
             </TouchableOpacity>
           </View>
         </View>
