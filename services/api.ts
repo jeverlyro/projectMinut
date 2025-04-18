@@ -1,7 +1,7 @@
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export const API_URL = "http://192.168.150.219:5000/api";
+export const API_URL = "http://192.168.38.208:5000/api";  // Replace with your actual API URL
 
 // For debugging: Add console logs to check connection
 console.log("API URL:", API_URL);
