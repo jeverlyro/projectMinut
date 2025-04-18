@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -12,22 +12,27 @@ import {
   StatusBar,
   Linking,
   Modal,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import Icon from 'react-native-vector-icons/Ionicons';
-import { LinearGradient } from 'expo-linear-gradient';
-import { Gabarito_400Regular, Gabarito_500Medium, Gabarito_600SemiBold, Gabarito_700Bold } from '@expo-google-fonts/gabarito';
-import MapView, { Marker, PROVIDER_DEFAULT, Polygon } from 'react-native-maps';
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import Icon from "react-native-vector-icons/Ionicons";
+import { LinearGradient } from "expo-linear-gradient";
+import {
+  Gabarito_400Regular,
+  Gabarito_500Medium,
+  Gabarito_600SemiBold,
+  Gabarito_700Bold,
+} from "@expo-google-fonts/gabarito";
+import MapView, { Marker, PROVIDER_DEFAULT, Polygon } from "react-native-maps";
 
 const NORTH_MINAHASA_COORDINATES = [
   { latitude: 1.4074, longitude: 124.9121 },
   { latitude: 1.3836, longitude: 124.9748 },
-  { latitude: 1.3571, longitude: 125.0560 },
-  { latitude: 1.4630, longitude: 125.1128 },
+  { latitude: 1.3571, longitude: 125.056 },
+  { latitude: 1.463, longitude: 125.1128 },
   { latitude: 1.5736, longitude: 125.1417 },
   { latitude: 1.6728, longitude: 125.0694 },
   { latitude: 1.7236, longitude: 125.0145 },
-  { latitude: 1.7010, longitude: 124.9398 },
+  { latitude: 1.701, longitude: 124.9398 },
   { latitude: 1.6425, longitude: 124.8893 },
   { latitude: 1.5369, longitude: 124.8812 },
   { latitude: 1.4074, longitude: 124.9121 },
@@ -65,23 +70,28 @@ const HISTORY_DATA = [
 
 const CULTURAL_LANDMARKS = [
   {
-    id: '1',
-    name: 'Kaki Dian',
-    description: 'Kaki Dian adalah sebuah menara dengan bentuk kaki dian dengan ketinggian 19 meter yang terletak sekitar 3 km dari kota Airmadidi.',
-    image: 'https://tablet-mag-images.b-cdn.net/production/a4b6d4a4c9ba8949ca7bff7be7f3b7efa5935e78-380x255.jpg?w=1300&q=70&auto=format&dpr=1'
+    id: "1",
+    name: "Kaki Dian",
+    description:
+      "Kaki Dian adalah sebuah menara dengan bentuk kaki dian dengan ketinggian 19 meter yang terletak sekitar 3 km dari kota Airmadidi.",
+    image:
+      "https://tablet-mag-images.b-cdn.net/production/a4b6d4a4c9ba8949ca7bff7be7f3b7efa5935e78-380x255.jpg?w=1300&q=70&auto=format&dpr=1",
   },
   {
-    id: '2',
-    name: 'Pantai Paal',
-    description: 'Pantai dengan pasir putih nya yang indah menjadi daya tarik para wisatawan untuk bersantai dan menikmati keindahan laut',
-    image: 'https://asset.kompas.com/crops/JV80V1xLTrAy8H6RAynNKT89fxA=/0x0:1200x800/750x500/data/photo/2021/09/09/613a0c89504c6.jpg'
+    id: "2",
+    name: "Pantai Paal",
+    description:
+      "Pantai dengan pasir putih nya yang indah menjadi daya tarik para wisatawan untuk bersantai dan menikmati keindahan laut",
+    image:
+      "https://asset.kompas.com/crops/JV80V1xLTrAy8H6RAynNKT89fxA=/0x0:1200x800/750x500/data/photo/2021/09/09/613a0c89504c6.jpg",
   },
   {
-    id: '3',
-    name: 'Gunung Klabat',
-    description: 'Merupakan gunung tertinggi di Sulawesi Utara dengan pemandangan yang menakjubkan dan jalur pendakian yang menantang',
-    image: 'https://statik.tempo.co/data/2021/01/05/id_992102/992102_720.jpg'
-  }
+    id: "3",
+    name: "Gunung Klabat",
+    description:
+      "Merupakan gunung tertinggi di Sulawesi Utara dengan pemandangan yang menakjubkan dan jalur pendakian yang menantang",
+    image: "https://statik.tempo.co/data/2021/01/05/id_992102/992102_720.jpg",
+  },
 ];
 
 const LOCAL_FOODS = [
@@ -108,9 +118,15 @@ const NorthMinahasa = () => {
   // Animation values
   const scrollY = useRef(new Animated.Value(0)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
-  const timelineAnimations = useRef(HISTORY_DATA.map(() => new Animated.Value(0))).current;
-  const landmarkAnimations = useRef(CULTURAL_LANDMARKS.map(() => new Animated.Value(0))).current;
-  const foodAnimations = useRef(LOCAL_FOODS.map(() => new Animated.Value(0))).current;
+  const timelineAnimations = useRef(
+    HISTORY_DATA.map(() => new Animated.Value(0))
+  ).current;
+  const landmarkAnimations = useRef(
+    CULTURAL_LANDMARKS.map(() => new Animated.Value(0))
+  ).current;
+  const foodAnimations = useRef(
+    LOCAL_FOODS.map(() => new Animated.Value(0))
+  ).current;
   const [fullMapVisible, setFullMapVisible] = useState(false);
 
   useEffect(() => {
@@ -124,7 +140,7 @@ const NorthMinahasa = () => {
     // Staggered animations for timeline items
     Animated.stagger(
       200,
-      timelineAnimations.map(anim =>
+      timelineAnimations.map((anim) =>
         Animated.timing(anim, {
           toValue: 1,
           duration: 500,
@@ -136,7 +152,7 @@ const NorthMinahasa = () => {
     // Staggered animations for landmarks
     Animated.stagger(
       150,
-      landmarkAnimations.map(anim =>
+      landmarkAnimations.map((anim) =>
         Animated.timing(anim, {
           toValue: 1,
           duration: 500,
@@ -148,7 +164,7 @@ const NorthMinahasa = () => {
     // Staggered animations for food items
     Animated.stagger(
       150,
-      foodAnimations.map(anim =>
+      foodAnimations.map((anim) =>
         Animated.timing(anim, {
           toValue: 1,
           duration: 400,
@@ -162,17 +178,17 @@ const NorthMinahasa = () => {
   const heroImageTranslate = scrollY.interpolate({
     inputRange: [-200, 0, 200],
     outputRange: [50, 0, -30],
-    extrapolate: 'clamp',
+    extrapolate: "clamp",
   });
 
   // Hero content scale effect
   const heroContentScale = scrollY.interpolate({
     inputRange: [-100, 0, 100],
     outputRange: [1.1, 1, 0.9],
-    extrapolate: 'clamp',
+    extrapolate: "clamp",
   });
 
-   ({
+  ({
     GabaritoRegular: Gabarito_400Regular,
     GabaritoMedium: Gabarito_500Medium,
     GabaritoSemiBold: Gabarito_600SemiBold,
@@ -186,27 +202,31 @@ const NorthMinahasa = () => {
         <Animated.View
           style={{
             transform: [{ translateY: heroImageTranslate }],
-            height: '100%',
-            width: '100%',
+            height: "100%",
+            width: "100%",
           }}
         >
-          <ImageBackground 
-            source={{uri: 'https://getlost.id/wp-content/uploads/2020/09/waruga_1420887923.jpg'}}
+          <ImageBackground
+            source={{
+              uri: "https://getlost.id/wp-content/uploads/2020/09/waruga_1420887923.jpg",
+            }}
             style={styles.heroImage}
           >
             <LinearGradient
-              colors={['rgba(0,0,0,0.2)', 'rgba(0,0,0,0.8)']}
+              colors={["rgba(0,0,0,0.2)", "rgba(0,0,0,0.8)"]}
               style={styles.heroOverlay}
             >
-              <Animated.View 
+              <Animated.View
                 style={[
                   styles.heroContent,
-                  { transform: [{ scale: heroContentScale }] }
+                  { transform: [{ scale: heroContentScale }] },
                 ]}
               >
                 <View style={styles.locationBadge}>
                   <Icon name="location" size={14} color="#fff" />
-                  <Text style={styles.locationText}>SULAWESI UTARA, INDONESIA</Text>
+                  <Text style={styles.locationText}>
+                    SULAWESI UTARA, INDONESIA
+                  </Text>
                 </View>
                 <Text style={styles.heroTitle}>Minahasa Utara</Text>
               </Animated.View>
@@ -280,21 +300,21 @@ const NorthMinahasa = () => {
 
           <View style={styles.timelineContainer}>
             {HISTORY_DATA.map((item, index) => (
-              <Animated.View 
-                key={item.id} 
+              <Animated.View
+                key={item.id}
                 style={[
                   styles.timelineItem,
                   {
                     opacity: timelineAnimations[index],
                     transform: [
-                      { 
+                      {
                         translateX: timelineAnimations[index].interpolate({
                           inputRange: [0, 1],
-                          outputRange: [-50, 0]
-                        }) 
-                      }
-                    ]
-                  }
+                          outputRange: [-50, 0],
+                        }),
+                      },
+                    ],
+                  },
                 ]}
               >
                 <View style={styles.timelineLine}>
@@ -340,28 +360,38 @@ const NorthMinahasa = () => {
             contentContainerStyle={styles.landmarksContainer}
           >
             {CULTURAL_LANDMARKS.map((landmark, index) => (
-              <Animated.View 
-                key={landmark.id} 
+              <Animated.View
+                key={landmark.id}
                 style={{
                   opacity: landmarkAnimations[index],
                   transform: [
-                    { 
+                    {
                       translateY: landmarkAnimations[index].interpolate({
                         inputRange: [0, 1],
-                        outputRange: [50, 0]
-                      }) 
-                    }
-                  ]
+                        outputRange: [50, 0],
+                      }),
+                    },
+                  ],
                 }}
               >
                 <TouchableOpacity style={styles.landmarkCard}>
-                  <Image source={{ uri: landmark.image }} style={styles.landmarkImage} />
+                  <Image
+                    source={{ uri: landmark.image }}
+                    style={styles.landmarkImage}
+                  />
                   <View style={styles.landmarkContent}>
                     <Text style={styles.landmarkName}>{landmark.name}</Text>
-                    <Text style={styles.landmarkDescription}>{landmark.description}</Text>
+                    <Text style={styles.landmarkDescription}>
+                      {landmark.description}
+                    </Text>
                     <View style={styles.landmarkButton}>
                       <Text style={styles.landmarkButtonText}>Jelajahi</Text>
-                      <Icon name="arrow-forward" size={16} color="#fff" style={styles.landmarkButtonIcon} />
+                      <Icon
+                        name="arrow-forward"
+                        size={16}
+                        color="#fff"
+                        style={styles.landmarkButtonIcon}
+                      />
                     </View>
                   </View>
                 </TouchableOpacity>
@@ -381,7 +411,7 @@ const NorthMinahasa = () => {
               />
               <Text style={styles.sectionTitle}>Geografi</Text>
             </View>
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.viewMoreButton}
               onPress={() => setFullMapVisible(true)}
             >
@@ -409,7 +439,7 @@ const NorthMinahasa = () => {
                 fillColor="rgba(52, 152, 219, 0.2)"
                 strokeWidth={2.5}
               />
-              
+
               {/* Outer glow effect */}
               <Polygon
                 coordinates={NORTH_MINAHASA_COORDINATES}
@@ -418,7 +448,7 @@ const NorthMinahasa = () => {
                 strokeWidth={5}
                 zIndex={1}
               />
-              
+
               {/* Inner highlight effect */}
               <Polygon
                 coordinates={NORTH_MINAHASA_COORDINATES}
@@ -427,7 +457,7 @@ const NorthMinahasa = () => {
                 strokeWidth={1}
                 zIndex={2}
               />
-              
+
               {/* Keep your existing markers */}
               <Marker
                 coordinate={{ latitude: 1.4396, longitude: 124.9824 }}
@@ -435,37 +465,50 @@ const NorthMinahasa = () => {
                 description="Ibukota Kabupaten Minahasa Utara"
               >
                 <View>
-                  <View style={[styles.markerDot, {backgroundColor: '#27ae60'}]} />
+                  <View
+                    style={[styles.markerDot, { backgroundColor: "#27ae60" }]}
+                  />
                 </View>
               </Marker>
-              
+
               <Marker
                 coordinate={{ latitude: 1.6728, longitude: 125.0694 }}
                 title="Likupang"
                 description="Wilayah Pesisir"
               >
                 <View>
-                  <View style={[styles.markerDot, {backgroundColor: '#3498db'}]} />
+                  <View
+                    style={[styles.markerDot, { backgroundColor: "#3498db" }]}
+                  />
                 </View>
               </Marker>
-              
+
               <Marker
                 coordinate={{ latitude: 1.3667, longitude: 125.0667 }}
                 title="Kema"
                 description="Pusat Kota"
               >
                 <View>
-                  <View style={[styles.markerDot, {backgroundColor: '#f39c12'}]} />
+                  <View
+                    style={[styles.markerDot, { backgroundColor: "#f39c12" }]}
+                  />
                 </View>
               </Marker>
             </MapView>
-            
+
             <View style={styles.mapOverlay}>
               <View style={styles.mapBadge}>
-                <Icon name="locate" size={12} color="#fff" style={{marginRight: 5}} />
-                <Text style={styles.mapBadgeText}>Kabupaten Minahasa Utara</Text>
+                <Icon
+                  name="locate"
+                  size={12}
+                  color="#fff"
+                  style={{ marginRight: 5 }}
+                />
+                <Text style={styles.mapBadgeText}>
+                  Kabupaten Minahasa Utara
+                </Text>
               </View>
-              <Text style={styles.mapSubtitle}>10 kecamatan • 125 desa</Text>
+              <Text style={styles.mapSubtitle}>10 kecamatan • 131 desa</Text>
             </View>
 
             <View style={styles.mapLegend}>
@@ -528,28 +571,33 @@ const NorthMinahasa = () => {
           <View style={styles.foodGrid}>
             {LOCAL_FOODS.map((food, index) => (
               <Animated.View
-                key={food.id} 
+                key={food.id}
                 style={{
                   opacity: foodAnimations[index],
                   transform: [
-                    { 
+                    {
                       scale: foodAnimations[index].interpolate({
                         inputRange: [0, 1],
-                        outputRange: [0.8, 1]
-                      }) 
-                    }
-                  ]
+                        outputRange: [0.8, 1],
+                      }),
+                    },
+                  ],
                 }}
               >
                 <TouchableOpacity style={styles.foodCard}>
-                  <Image source={{ uri: food.image }} style={styles.foodImage} />
+                  <Image
+                    source={{ uri: food.image }}
+                    style={styles.foodImage}
+                  />
                   <LinearGradient
-                    colors={['transparent', 'rgba(0,0,0,0.9)']}
+                    colors={["transparent", "rgba(0,0,0,0.9)"]}
                     style={styles.foodGradient}
                   />
                   <View style={styles.foodContent}>
                     <Text style={styles.foodName}>{food.name}</Text>
-                    <Text style={styles.foodDescription}>{food.description}</Text>
+                    <Text style={styles.foodDescription}>
+                      {food.description}
+                    </Text>
                   </View>
                 </TouchableOpacity>
               </Animated.View>
@@ -569,32 +617,43 @@ const NorthMinahasa = () => {
               <Text style={styles.sectionTitle}>Seni Tradisional</Text>
             </View>
           </View>
-          
-          <Animated.View 
+
+          <Animated.View
             style={[
               styles.artCard,
               {
                 opacity: fadeAnim,
                 transform: [
-                  { 
+                  {
                     translateY: fadeAnim.interpolate({
                       inputRange: [0, 1],
-                      outputRange: [30, 0]
-                    }) 
-                  }
-                ]
-              }
+                      outputRange: [30, 0],
+                    }),
+                  },
+                ],
+              },
             ]}
           >
-            <Image source={{uri: 'https://th.bing.com/th/id/R.2b174167240b813124d88cc13015282c?rik=on23Xfi47Auz%2bg&riu=http%3a%2f%2f1.bp.blogspot.com%2f-WPcJLJklBcI%2fVNFXF_wlVKI%2fAAAAAAAACYE%2fkbg8yH1Fno4%2fs1600%2f17.jpg&ehk=ipDdJKc2lhFy9H0lIy9r01MFDZILY7qqFFu5UsepbMQ%3d&risl=&pid=ImgRaw&r=0&sres=1&sresct=1'}} style={styles.artImage} />
+            <Image
+              source={{
+                uri: "https://th.bing.com/th/id/R.2b174167240b813124d88cc13015282c?rik=on23Xfi47Auz%2bg&riu=http%3a%2f%2f1.bp.blogspot.com%2f-WPcJLJklBcI%2fVNFXF_wlVKI%2fAAAAAAAACYE%2fkbg8yH1Fno4%2fs1600%2f17.jpg&ehk=ipDdJKc2lhFy9H0lIy9r01MFDZILY7qqFFu5UsepbMQ%3d&risl=&pid=ImgRaw&r=0&sres=1&sresct=1",
+              }}
+              style={styles.artImage}
+            />
             <View style={styles.artContent}>
               <Text style={styles.artTitle}>Kabasaran</Text>
               <Text style={styles.artDescription}>
-                Tarian perang tradisional Minahasa yang ditampilkan dalam upacara-upacara adat penting. Penari menggunakan perisai dan tombak sambil melakukan gerakan yang dinamis dan penuh semangat.
+                Tarian perang tradisional Minahasa yang ditampilkan dalam
+                upacara-upacara adat penting. Penari menggunakan perisai dan
+                tombak sambil melakukan gerakan yang dinamis dan penuh semangat.
               </Text>
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={styles.artButton}
-                onPress={() => Linking.openURL('https://youtu.be/CMcQdnKEAbI?si=pumlXiVff1vsoGLU')}
+                onPress={() =>
+                  Linking.openURL(
+                    "https://youtu.be/CMcQdnKEAbI?si=pumlXiVff1vsoGLU"
+                  )
+                }
               >
                 <Text style={styles.artButtonText}>Tonton Pertunjukan</Text>
                 <Icon name="play-circle-outline" size={20} color="#252129" />
@@ -603,7 +662,7 @@ const NorthMinahasa = () => {
           </Animated.View>
         </View>
       </Animated.ScrollView>
-      
+
       {/* Full Map Modal */}
       <Modal
         visible={fullMapVisible}
@@ -629,7 +688,7 @@ const NorthMinahasa = () => {
               fillColor="rgba(52, 152, 219, 0.2)"
               strokeWidth={2.5}
             />
-            
+
             {/* Outer glow effect */}
             <Polygon
               coordinates={NORTH_MINAHASA_COORDINATES}
@@ -638,7 +697,7 @@ const NorthMinahasa = () => {
               strokeWidth={5}
               zIndex={1}
             />
-            
+
             {/* Inner highlight effect */}
             <Polygon
               coordinates={NORTH_MINAHASA_COORDINATES}
@@ -647,7 +706,7 @@ const NorthMinahasa = () => {
               strokeWidth={1}
               zIndex={2}
             />
-            
+
             {/* Map markers */}
             <Marker
               coordinate={{ latitude: 1.4396, longitude: 124.9824 }}
@@ -655,52 +714,64 @@ const NorthMinahasa = () => {
               description="Ibukota Kabupaten Minahasa Utara"
             >
               <View>
-                <View style={[styles.markerDot, {backgroundColor: '#27ae60'}]} />
+                <View
+                  style={[styles.markerDot, { backgroundColor: "#27ae60" }]}
+                />
               </View>
             </Marker>
-            
+
             <Marker
               coordinate={{ latitude: 1.6728, longitude: 125.0694 }}
               title="Likupang"
               description="Wilayah Pesisir"
             >
               <View>
-                <View style={[styles.markerDot, {backgroundColor: '#3498db'}]} />
+                <View
+                  style={[styles.markerDot, { backgroundColor: "#3498db" }]}
+                />
               </View>
             </Marker>
-            
+
             <Marker
               coordinate={{ latitude: 1.3667, longitude: 125.0667 }}
               title="Kema"
               description="Pusat Kota"
             >
               <View>
-                <View style={[styles.markerDot, {backgroundColor: '#f39c12'}]} />
+                <View
+                  style={[styles.markerDot, { backgroundColor: "#f39c12" }]}
+                />
               </View>
             </Marker>
           </MapView>
-          
+
           <View style={styles.fullMapHeader}>
             <Text style={styles.fullMapTitle}>Peta Minahasa Utara</Text>
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.closeMapButton}
               onPress={() => setFullMapVisible(false)}
             >
               <Icon name="close-circle" size={28} color="#252129" />
             </TouchableOpacity>
           </View>
-          
+
           <View style={styles.fullMapLegend}>
             <View style={styles.legendItem}>
-              <View style={[styles.legendDot, {backgroundColor: '#3498db'}]} />
+              <View
+                style={[styles.legendDot, { backgroundColor: "#3498db" }]}
+              />
               <Text style={styles.legendText}>Wilayah Pesisir</Text>
             </View>
             <View style={styles.legendItem}>
-              <View style={[styles.legendDot, {backgroundColor: '#27ae60'}]} />
+              <View
+                style={[styles.legendDot, { backgroundColor: "#27ae60" }]}
+              />
               <Text style={styles.legendText}>Dataran Tinggi</Text>
             </View>
             <View style={styles.legendItem}>
-              <View style={[styles.legendDot, {backgroundColor: '#f39c12'}]} />
+              <View
+                style={[styles.legendDot, { backgroundColor: "#f39c12" }]}
+              />
               <Text style={styles.legendText}>Pusat Kota</Text>
             </View>
           </View>
@@ -822,17 +893,17 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 20,
-    fontFamily: 'GabaritoBold',
-    color: '#333',
+    fontFamily: "GabaritoBold",
+    color: "#333",
   },
   viewMoreButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   viewMoreText: {
     fontSize: 14,
-    color: '#666',
-    fontFamily: 'GabaritoMedium',
+    color: "#666",
+    fontFamily: "GabaritoMedium",
     marginRight: 2,
   },
   overviewCard: {
@@ -967,22 +1038,22 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     padding: 18,
-    backgroundColor: 'rgba(255,255,255,0.8)',
+    backgroundColor: "rgba(255,255,255,0.8)",
   },
   mapBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#3498db',
-    alignSelf: 'flex-start',
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#3498db",
+    alignSelf: "flex-start",
     paddingVertical: 5,
     paddingHorizontal: 10,
     borderRadius: 12,
     marginBottom: 8,
   },
   mapBadgeText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 12,
-    fontFamily: 'GabaritoMedium',
+    fontFamily: "GabaritoMedium",
   },
   mapTitle: {
     fontSize: 18,
@@ -1214,8 +1285,8 @@ const styles = StyleSheet.create({
     height: 14,
     borderRadius: 7,
     borderWidth: 2,
-    borderColor: 'white',
-    shadowColor: '#000',
+    borderColor: "white",
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 3,
@@ -1223,26 +1294,26 @@ const styles = StyleSheet.create({
   },
   fullMapContainer: {
     flex: 1,
-    position: 'relative',
+    position: "relative",
   },
   fullMapView: {
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
   },
   fullMapHeader: {
-    position: 'absolute',
+    position: "absolute",
     top: 48,
     left: 0,
     right: 0,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingHorizontal: 20,
     paddingVertical: 15,
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    backgroundColor: "rgba(255, 255, 255, 0.9)",
     borderRadius: 12,
     marginHorizontal: 20,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
@@ -1250,23 +1321,23 @@ const styles = StyleSheet.create({
   },
   fullMapTitle: {
     fontSize: 18,
-    fontFamily: 'GabaritoBold',
-    color: '#252129',
+    fontFamily: "GabaritoBold",
+    color: "#252129",
   },
   closeMapButton: {
     padding: 5,
   },
   fullMapLegend: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 40,
     left: 20,
     right: 20,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    backgroundColor: "rgba(255, 255, 255, 0.9)",
     borderRadius: 12,
     padding: 15,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
