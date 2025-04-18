@@ -110,9 +110,6 @@ const ProfileDetailsScreen = ({ navigation }: ProfileDetailsScreenProps) => {
         <View style={styles.profileContainer}>
           <Image source={{ uri: user.avatar }} style={styles.avatar} />
           <Text style={styles.username}>{user.username}</Text>
-          <Text style={styles.userLocation}>
-            Minahasa Utara, Sulawesi Utara
-          </Text>
         </View>
 
         <View style={styles.detailsContainer}>
@@ -213,11 +210,6 @@ const styles = StyleSheet.create({
     color: "#252129",
     marginTop: 16,
     marginBottom: 4,
-  },
-  userLocation: {
-    fontSize: 14,
-    fontFamily: "GabaritoRegular",
-    color: "#6c757d",
   },
   detailsContainer: {
     backgroundColor: "#fff",
