@@ -95,4 +95,28 @@ export const auth = {
   },
 };
 
+export const user = {
+  changePassword: async (currentPassword: string, newPassword: string) => {
+    try {
+      const token = await AsyncStorage.getItem("token");
+      if (!token) throw new Error("No authentication token found");
+
+      const response = await axios.put(
+        `${API_URL}/users/change-password`,
+        { currentPassword, newPassword },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Change password error:", error);
+      throw error;
+    }
+  },
+};
+
 export default api;
