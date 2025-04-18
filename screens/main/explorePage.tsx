@@ -93,7 +93,7 @@ const culturalItems: CulturalItem[] = [
     description:
       "Gunung tertinggi di Sulawesi Utara (1995 mdpl) dengan jalur pendakian yang menantang dan pemandangan spektakuler.",
     location: "Airmadidi, Minahasa Utara",
-    coordinates: { latitude: 1.4096, longitude: 124.9833 },
+    coordinates: { latitude: 1.4536536565252405,  longitude: 125.0317299451305 },
   },
   {
     id: "7",
@@ -104,7 +104,7 @@ const culturalItems: CulturalItem[] = [
     description:
       "Danau vulkanik berair biru yang terletak di kaki Gunung Klabat dengan keindahan alam yang mempesona.",
     location: "Airmadidi, Minahasa Utara",
-    coordinates: { latitude: 1.4123, longitude: 124.9856 },
+    coordinates: { latitude: 1.4369417926909949, longitude: 124.99302332546253 },  
   },
   {
     id: "8",
@@ -114,8 +114,8 @@ const culturalItems: CulturalItem[] = [
     image: { uri: "https://placehold.co/400x300/png?text=Hutan+Kenangan" },
     description:
       "Area konservasi alam dengan berbagai jenis vegetasi khas Sulawesi Utara yang asri dan sejuk.",
-    location: "Airmadidi, Minahasa Utara",
-    coordinates: { latitude: 1.4156, longitude: 124.9879 },
+    location: "Airmadidi, Minahasa Utara", 
+    coordinates: { latitude: 1.4568012450935772,  longitude: 124.97424136666629 }, 
   },
   {
     id: "9",
@@ -126,7 +126,7 @@ const culturalItems: CulturalItem[] = [
     description:
       "Situs sejarah berupa kuburan batu tradisional Minahasa yang menunjukkan budaya pemakaman zaman dulu.",
     location: "Sawangan, Minahasa Utara",
-    coordinates: { latitude: 1.4723, longitude: 124.9921 },
+    coordinates: { latitude: 1.39280388942744, longitude: 124.96349545105363 },  
   },
   {
     id: "10",
@@ -137,7 +137,6 @@ const culturalItems: CulturalItem[] = [
     description:
       "Pusat jajanan dan kuliner khas Minahasa Utara dengan berbagai masakan tradisional yang menggugah selera.",
     location: "Airmadidi, Minahasa Utara",
-    coordinates: { latitude: 1.4096, longitude: 124.9833 },
   },
   {
     id: "11",
@@ -148,7 +147,7 @@ const culturalItems: CulturalItem[] = [
     description:
       "Bukit dengan pemandangan panorama indah matahari terbit dan matahari terbenam yang memukau.",
     location: "Likupang Barat, Minahasa Utara",
-    coordinates: { latitude: 1.7512, longitude: 125.0487 },
+    coordinates: { latitude:1.666508499422102, longitude: 125.16217682077153 },
   },
   {
     id: "12",
@@ -159,7 +158,7 @@ const culturalItems: CulturalItem[] = [
     description:
       "Area tanjung dengan pantai indah dan pemandangan laut lepas yang memukau.",
     location: "Likupang Barat, Minahasa Utara",
-    coordinates: { latitude: 1.7645, longitude: 125.0563 },
+    coordinates: { latitude: 1.7383812600297632, longitude: 124.98513273708187 },
   },
   {
     id: "13",
@@ -170,7 +169,7 @@ const culturalItems: CulturalItem[] = [
     description:
       "Lokasi arung jeram menantang dengan pemandangan alam yang indah di sepanjang jalur sungai.",
     location: "Sawangan, Minahasa Utara",
-    coordinates: { latitude: 1.4723, longitude: 124.9921 },
+    coordinates: { latitude:  1.3930915799446035, longitude:  124.96360239968145 },
   },
   {
     id: "14",
@@ -181,7 +180,6 @@ const culturalItems: CulturalItem[] = [
     description:
       "Situs sejarah yang mengenang jasa pahlawan nasional Maria Walanda Maramis, pejuang hak perempuan.",
     location: "Airmadidi, Minahasa Utara",
-    coordinates: { latitude: 1.4096, longitude: 124.9833 },
   },
 
   // Budaya category
