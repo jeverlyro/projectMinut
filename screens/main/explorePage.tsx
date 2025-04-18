@@ -38,7 +38,7 @@ const culturalItems: CulturalItem[] = [
     description:
       "Pantai eksotis di Zona Ekonomi Khusus (KEK) yang mencakup Pantai Paal, Pulisan, dan Kinunang dengan pasir putih dan air laut jernih.",
     location: "Likupang Timur, Minahasa Utara",
-    coordinates: { latitude: 1.6728, longitude: 125.0694 },
+    coordinates: { latitude: 1.6823031142032934, longitude: 125.14779381850882 }, 
   },
   {
     id: "2",
@@ -49,7 +49,7 @@ const culturalItems: CulturalItem[] = [
     description:
       "Pulau kecil dengan pantai berpasir putih dan air laut biru jernih, ideal untuk snorkeling dan diving.",
     location: "Likupang Timur, Minahasa Utara",
-    coordinates: { latitude: 1.7236, longitude: 125.0145 },
+    coordinates: { latitude: 1.7616158680289602,longitude: 125.03677189025609 }, 
   },
   {
     id: "3",
@@ -60,7 +60,7 @@ const culturalItems: CulturalItem[] = [
     description:
       "Pulau dengan resort eksklusif, terkenal dengan terumbu karang dan kehidupan laut yang beragam.",
     location: "Likupang Barat, Minahasa Utara",
-    coordinates: { latitude: 1.7512, longitude: 125.0487 },
+    coordinates: { latitude: 1.7615957609386508,  longitude: 125.0512146946257 },
   },
   {
     id: "4",
@@ -71,7 +71,7 @@ const culturalItems: CulturalItem[] = [
     description:
       "Pulau indah dengan pantai eksotis dan pemandangan bawah laut yang mempesona untuk kegiatan menyelam.",
     location: "Likupang Barat, Minahasa Utara",
-    coordinates: { latitude: 1.7645, longitude: 125.0563 },
+    coordinates: { latitude: 1.7974414954372149,  longitude: 125.18322671097842 }, 
   },
   {
     id: "5",
@@ -82,7 +82,7 @@ const culturalItems: CulturalItem[] = [
     description:
       "Air terjun yang indah dengan ketinggian sekitar 20 meter, dikelilingi vegetasi hijau yang asri.",
     location: "Dimembe, Minahasa Utara",
-    coordinates: { latitude: 1.5567, longitude: 124.9802 },
+    coordinates: { latitude: 1.5684001555483225, longitude: 124.97291564932739 }, 
   },
   {
     id: "6",
