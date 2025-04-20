@@ -16,10 +16,17 @@ import {
   Pressable,
   ToastAndroid,
   Alert,
+  Linking,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useSavedItems, CulturalItem } from "../../services/SavedItemsContext";
 import MapView, { Marker } from "react-native-maps";
+import { Audio } from "expo-av";
+
+// Extend CulturalItem to include audio property
+interface ExtendedCulturalItem extends CulturalItem {
+  audioFile?: string;
+}
 
 if (
   Platform.OS === "android" &&
@@ -28,7 +35,7 @@ if (
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
-const culturalItems: CulturalItem[] = [
+const culturalItems: ExtendedCulturalItem[] = [
   {
     id: "1",
     name: "Pantai Likupang",
@@ -39,6 +46,7 @@ const culturalItems: CulturalItem[] = [
       "Pantai eksotis di Zona Ekonomi Khusus (KEK) yang mencakup Pantai Paal, Pulisan, dan Kinunang dengan pasir putih dan air laut jernih.",
     location: "Likupang Timur, Minahasa Utara",
     coordinates: { latitude: 1.6728, longitude: 125.0694 },
+    audioFile: "Pantai Likupang.mp3",
   },
   {
     id: "2",
@@ -50,6 +58,7 @@ const culturalItems: CulturalItem[] = [
       "Pulau kecil dengan pantai berpasir putih dan air laut biru jernih, ideal untuk snorkeling dan diving.",
     location: "Likupang Timur, Minahasa Utara",
     coordinates: { latitude: 1.7236, longitude: 125.0145 },
+    audioFile: "Lihaga.mp3",
   },
   {
     id: "3",
@@ -61,6 +70,7 @@ const culturalItems: CulturalItem[] = [
       "Pulau dengan resort eksklusif, terkenal dengan terumbu karang dan kehidupan laut yang beragam.",
     location: "Likupang Barat, Minahasa Utara",
     coordinates: { latitude: 1.7512, longitude: 125.0487 },
+    audioFile: "gangga.mp3",
   },
   {
     id: "4",
@@ -72,6 +82,7 @@ const culturalItems: CulturalItem[] = [
       "Pulau indah dengan pantai eksotis dan pemandangan bawah laut yang mempesona untuk kegiatan menyelam.",
     location: "Likupang Barat, Minahasa Utara",
     coordinates: { latitude: 1.7645, longitude: 125.0563 },
+    audioFile: "bangka.mp3",
   },
   {
     id: "5",
@@ -83,6 +94,7 @@ const culturalItems: CulturalItem[] = [
       "Air terjun yang indah dengan ketinggian sekitar 20 meter, dikelilingi vegetasi hijau yang asri.",
     location: "Dimembe, Minahasa Utara",
     coordinates: { latitude: 1.5567, longitude: 124.9802 },
+    audioFile: "Tunan.mp3",
   },
   {
     id: "6",
@@ -94,6 +106,7 @@ const culturalItems: CulturalItem[] = [
       "Gunung tertinggi di Sulawesi Utara (1995 mdpl) dengan jalur pendakian yang menantang dan pemandangan spektakuler.",
     location: "Airmadidi, Minahasa Utara",
     coordinates: { latitude: 1.4096, longitude: 124.9833 },
+    audioFile: "klabat.mp3",
   },
   {
     id: "7",
@@ -105,6 +118,7 @@ const culturalItems: CulturalItem[] = [
       "Danau vulkanik berair biru yang terletak di kaki Gunung Klabat dengan keindahan alam yang mempesona.",
     location: "Airmadidi, Minahasa Utara",
     coordinates: { latitude: 1.4123, longitude: 124.9856 },
+    audioFile: "kaki dian.mp3",
   },
   {
     id: "8",
@@ -116,6 +130,7 @@ const culturalItems: CulturalItem[] = [
       "Area konservasi alam dengan berbagai jenis vegetasi khas Sulawesi Utara yang asri dan sejuk.",
     location: "Airmadidi, Minahasa Utara",
     coordinates: { latitude: 1.4156, longitude: 124.9879 },
+    audioFile: "hutan kenangan.mp3",
   },
   {
     id: "9",
@@ -127,6 +142,7 @@ const culturalItems: CulturalItem[] = [
       "Situs sejarah berupa kuburan batu tradisional Minahasa yang menunjukkan budaya pemakaman zaman dulu.",
     location: "Sawangan, Minahasa Utara",
     coordinates: { latitude: 1.4723, longitude: 124.9921 },
+    audioFile: "waruga sawngan.mp3",
   },
   {
     id: "10",
@@ -138,6 +154,7 @@ const culturalItems: CulturalItem[] = [
       "Pusat jajanan dan kuliner khas Minahasa Utara dengan berbagai masakan tradisional yang menggugah selera.",
     location: "Airmadidi, Minahasa Utara",
     coordinates: { latitude: 1.4096, longitude: 124.9833 },
+    audioFile: "kuliner pasar tradisional.mp3",
   },
   {
     id: "11",
@@ -149,6 +166,7 @@ const culturalItems: CulturalItem[] = [
       "Bukit dengan pemandangan panorama indah matahari terbit dan matahari terbenam yang memukau.",
     location: "Likupang Barat, Minahasa Utara",
     coordinates: { latitude: 1.7512, longitude: 125.0487 },
+    audioFile: "bukit larata.mp3",
   },
   {
     id: "12",
@@ -160,6 +178,7 @@ const culturalItems: CulturalItem[] = [
       "Area tanjung dengan pantai indah dan pemandangan laut lepas yang memukau.",
     location: "Likupang Barat, Minahasa Utara",
     coordinates: { latitude: 1.7645, longitude: 125.0563 },
+    audioFile: "tanjung tarabitan.mp3",
   },
   {
     id: "13",
@@ -171,6 +190,7 @@ const culturalItems: CulturalItem[] = [
       "Lokasi arung jeram menantang dengan pemandangan alam yang indah di sepanjang jalur sungai.",
     location: "Sawangan, Minahasa Utara",
     coordinates: { latitude: 1.4723, longitude: 124.9921 },
+    audioFile: "arum jeram sawangan.mp3",
   },
   {
     id: "14",
@@ -182,9 +202,8 @@ const culturalItems: CulturalItem[] = [
       "Situs sejarah yang mengenang jasa pahlawan nasional Maria Walanda Maramis, pejuang hak perempuan.",
     location: "Airmadidi, Minahasa Utara",
     coordinates: { latitude: 1.4096, longitude: 124.9833 },
+    audioFile: "walanda maramis.mp3",
   },
-
-  // Budaya category
   {
     id: "15",
     name: "Merawale",
@@ -194,6 +213,7 @@ const culturalItems: CulturalItem[] = [
     description:
       "Tradisi musyawarah masyarakat Minahasa untuk menyelesaikan permasalahan bersama secara kekeluargaan.",
     location: "Minahasa Utara",
+    audioFile: "marawale.mp3",
   },
   {
     id: "16",
@@ -204,6 +224,7 @@ const culturalItems: CulturalItem[] = [
     description:
       "Sistem gotong royong dan kerja sama tradisional masyarakat Minahasa dalam berbagai kegiatan sosial dan pertanian.",
     location: "Minahasa Utara",
+    audioFile: "mapalus.mp3",
   },
   {
     id: "17",
@@ -214,6 +235,7 @@ const culturalItems: CulturalItem[] = [
     description:
       "Upacara tradisional yang dilaksanakan sebagai ucapan syukur dan harapan untuk tahun baru yang lebih baik.",
     location: "Minahasa Utara",
+    audioFile: "desa budo.mp3",
   },
   {
     id: "18",
@@ -224,6 +246,7 @@ const culturalItems: CulturalItem[] = [
     description:
       "Tarian tradisional Minahasa yang menggambarkan kesopanan dan keramahan gadis-gadis Minahasa.",
     location: "Minahasa Utara",
+    audioFile: "tari tumatenden.mp3",
   },
   {
     id: "19",
@@ -234,6 +257,7 @@ const culturalItems: CulturalItem[] = [
     description:
       "Tarian lincah dan energik yang dilakukan secara berkelompok, menunjukkan kegembiraan dan persaudaraan.",
     location: "Minahasa Utara",
+    audioFile: "ampe wayer.mp3",
   },
   {
     id: "20",
@@ -244,6 +268,7 @@ const culturalItems: CulturalItem[] = [
     description:
       "Tradisi pemakaman kuno masyarakat Minahasa menggunakan peti batu berbentuk kubus yang unik.",
     location: "Minahasa Utara",
+    audioFile: "waruga.mp3",
   },
   {
     id: "21",
@@ -254,6 +279,7 @@ const culturalItems: CulturalItem[] = [
     description:
       "Festival tahunan yang menunjukkan rasa syukur atas hasil panen, ditandai dengan pesta dan berbagi makanan.",
     location: "Minahasa Utara",
+    audioFile: "pengucapan.mp3",
   },
 ];
 
@@ -261,72 +287,221 @@ const ExploreScreen = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState("All");
   const [activeMainCategory, setActiveMainCategory] = useState("All");
-  const [filteredItems, setFilteredItems] = useState(culturalItems);
-  const [selectedItem, setSelectedItem] = useState<CulturalItem | null>(null);
+  const [filteredItems, setFilteredItems] =
+    useState<ExtendedCulturalItem[]>(culturalItems);
+  const [selectedItem, setSelectedItem] = useState<ExtendedCulturalItem | null>(
+    null
+  );
   const [modalVisible, setModalVisible] = useState(false);
+
+  const [sound, setSound] = useState<Audio.Sound | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [playbackPosition, setPlaybackPosition] = useState(0);
+  const [playbackDuration, setPlaybackDuration] = useState(0);
 
   const { savedItems, saveItem, removeItem, isItemSaved } = useSavedItems();
 
   useEffect(() => {
-    const items = culturalItems.filter((item) => {
-      const matchesSearch =
-        item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.description.toLowerCase().includes(searchQuery.toLowerCase());
+    return sound
+      ? () => {
+          sound.unloadAsync();
+        }
+      : undefined;
+  }, [sound]);
 
-      const matchesCategory =
-        activeTab === "All" ||
-        item.type === activeTab ||
-        item.category === activeTab;
+  useEffect(() => {
+    if (!modalVisible && sound) {
+      sound.unloadAsync();
+      setSound(null);
+      setIsPlaying(false);
+      setPlaybackPosition(0);
+      setPlaybackDuration(0);
+    }
+  }, [modalVisible]);
 
-      return matchesSearch && matchesCategory;
-    });
+  useEffect(() => {
+    let result = culturalItems;
 
-    setFilteredItems(items);
-  }, [searchQuery, activeTab]);
+    // Filter by search query
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      result = result.filter(
+        (item) =>
+          item.name.toLowerCase().includes(query) ||
+          item.description.toLowerCase().includes(query) ||
+          (item.location && item.location.toLowerCase().includes(query)) ||
+          item.category.toLowerCase().includes(query)
+      );
+    }
 
-  const getSubcategories = (mainCategory: string) => {
-    const items = culturalItems.filter((item) => item.type === mainCategory);
-    const categories = [...new Set(items.map((item) => item.category))];
-    return categories;
+    // Filter by main category (Wisata/Budaya/All)
+    if (activeMainCategory !== "All") {
+      result = result.filter((item) => item.type === activeMainCategory);
+    }
+
+    // Filter by subcategory
+    if (activeTab !== "All") {
+      result = result.filter((item) => item.category === activeTab);
+    }
+
+    setFilteredItems(result);
+  }, [searchQuery, activeMainCategory, activeTab]);
+
+  const handleMainCategoryChange = (category: string) => {
+    setActiveMainCategory(category);
+    setActiveTab("All"); // Reset subcategory when main category changes
   };
 
-  const handleMainTabChange = (tab: string) => {
-    setActiveMainCategory(tab);
+  const handleTabChange = (tab: string) => {
     setActiveTab(tab);
   };
 
-  const handleSubTabChange = (tab: string) => {
-    setActiveTab(tab);
+  const getSubcategories = () => {
+    const subcategories = new Set<string>();
+
+    let items = culturalItems;
+    if (activeMainCategory !== "All") {
+      items = items.filter((item) => item.type === activeMainCategory);
+    }
+
+    items.forEach((item) => subcategories.add(item.category));
+    return ["All", ...Array.from(subcategories)];
   };
 
-  const handleItemPress = (item: CulturalItem) => {
-    setSelectedItem(item);
-    setModalVisible(true);
-  };
+  const onPlaybackStatusUpdate = (status: any) => {
+    if (status.isLoaded) {
+      setPlaybackPosition(status.positionMillis);
+      setPlaybackDuration(status.durationMillis);
 
-  const handleSaveItem = async (item: CulturalItem) => {
-    try {
-      if (isItemSaved(item.id)) {
-        await removeItem(item.id);
-        if (Platform.OS === "android") {
-          ToastAndroid.show("Item dihapus dari tersimpan", ToastAndroid.SHORT);
-        } else {
-          Alert.alert("Tersimpan", "Item dihapus dari tersimpan");
-        }
-      } else {
-        await saveItem(item);
-        if (Platform.OS === "android") {
-          ToastAndroid.show("Item berhasil disimpan", ToastAndroid.SHORT);
-        } else {
-          Alert.alert("Tersimpan", "Item berhasil disimpan");
-        }
+      if (status.didJustFinish) {
+        setIsPlaying(false);
       }
-    } catch (error) {
-      console.error("Error toggling save item:", error);
     }
   };
 
-  const renderCultureItem = ({ item }: { item: CulturalItem }) => {
+  const togglePlayback = async () => {
+    if (!selectedItem?.audioFile) return;
+
+    try {
+      if (sound) {
+        if (isPlaying) {
+          await sound.pauseAsync();
+          setIsPlaying(false);
+        } else {
+          await sound.playAsync();
+          setIsPlaying(true);
+        }
+      } else {
+        setIsLoading(true);
+
+        try {
+          let audioModule;
+
+          switch (selectedItem.audioFile) {
+            case "ampe wayer.mp3":
+              audioModule = require("../../assets/audios/ampe wayer.mp3");
+              break;
+            case "arum jeram sawangan.mp3":
+              audioModule = require("../../assets/audios/arum jeram sawangan.mp3");
+              break;
+            case "bangka.mp3":
+              audioModule = require("../../assets/audios/bangka.mp3");
+              break;
+            case "bukit larata.mp3":
+              audioModule = require("../../assets/audios/bukit larata.mp3");
+              break;
+            case "desa budo.mp3":
+              audioModule = require("../../assets/audios/desa budo.mp3");
+              break;
+            case "gangga.mp3":
+              audioModule = require("../../assets/audios/gangga.mp3");
+              break;
+            case "hutan kenangan.mp3":
+              audioModule = require("../../assets/audios/hutan kenangan.mp3");
+              break;
+            case "kaki dian.mp3":
+              audioModule = require("../../assets/audios/kaki dian.mp3");
+              break;
+            case "klabat.mp3":
+              audioModule = require("../../assets/audios/klabat.mp3");
+              break;
+            case "kuliner pasar tradisional.mp3":
+              audioModule = require("../../assets/audios/kuliner pasar tradisional.mp3");
+              break;
+            case "Lihaga.mp3":
+              audioModule = require("../../assets/audios/Lihaga.mp3");
+              break;
+            case "mapalus.mp3":
+              audioModule = require("../../assets/audios/mapalus.mp3");
+              break;
+            case "marawale.mp3":
+              audioModule = require("../../assets/audios/marawale.mp3");
+              break;
+            case "Pantai Likupang.mp3":
+              audioModule = require("../../assets/audios/Pantai Likupang.mp3");
+              break;
+            case "pengucapan.mp3":
+              audioModule = require("../../assets/audios/pengucapan.mp3");
+              break;
+            case "tanjung tarabitan.mp3":
+              audioModule = require("../../assets/audios/tanjung tarabitan.mp3");
+              break;
+            case "tari tumatenden.mp3":
+              audioModule = require("../../assets/audios/tari tumatenden.mp3");
+              break;
+            case "Tunan.mp3":
+              audioModule = require("../../assets/audios/Tunan.mp3");
+              break;
+            case "walanda maramis.mp3":
+              audioModule = require("../../assets/audios/walanda maramis.mp3");
+              break;
+            case "waruga sawngan.mp3":
+              audioModule = require("../../assets/audios/waruga sawngan.mp3");
+              break;
+            case "waruga.mp3":
+              audioModule = require("../../assets/audios/waruga.mp3");
+              break;
+            default:
+              throw new Error(
+                `Audio file not found: ${selectedItem.audioFile}`
+              );
+          }
+
+          const { sound: newSound } = await Audio.Sound.createAsync(
+            audioModule,
+            { shouldPlay: true },
+            onPlaybackStatusUpdate
+          );
+
+          setSound(newSound);
+          setIsPlaying(true);
+        } catch (error) {
+          console.log("Error loading audio:", error);
+          Alert.alert("Audio Error", "Tidak dapat memuat audio");
+        }
+
+        setIsLoading(false);
+      }
+    } catch (error) {
+      console.log("Error playing audio:", error);
+      setIsLoading(false);
+    }
+  };
+
+  const formatTime = (millis: number) => {
+    const minutes = Math.floor(millis / 60000);
+    const seconds = Math.floor((millis % 60000) / 1000);
+    return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+  };
+
+  const seekAudio = async (position: number) => {
+    if (sound) {
+      await sound.setPositionAsync(position);
+    }
+  };
+
+  const renderCultureItem = ({ item }: { item: ExtendedCulturalItem }) => {
     const saved = isItemSaved(item.id);
 
     return (
@@ -373,6 +548,11 @@ const ExploreScreen = () => {
     );
   };
 
+  const handleItemPress = (item: ExtendedCulturalItem) => {
+    setSelectedItem(item);
+    setModalVisible(true);
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -397,37 +577,42 @@ const ExploreScreen = () => {
         />
       </View>
 
-      <View style={styles.tabContainer}>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+      <View style={styles.mainCategoryTabsContainer}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.mainCategoryTabs}
+        >
           <TouchableOpacity
             style={[
-              styles.tab,
-              activeMainCategory === "All" && styles.activeTab,
+              styles.mainCategoryTab,
+              activeMainCategory === "All" && styles.activeMainCategoryTab,
             ]}
-            onPress={() => handleMainTabChange("All")}
+            onPress={() => handleMainCategoryChange("All")}
           >
             <Text
               style={[
-                styles.tabText,
-                activeMainCategory === "All" && styles.activeTabText,
+                styles.mainCategoryTabText,
+                activeMainCategory === "All" &&
+                  styles.activeMainCategoryTabText,
               ]}
             >
               Semua
             </Text>
           </TouchableOpacity>
 
-          {/* Main categories */}
           <TouchableOpacity
             style={[
-              styles.tab,
-              activeMainCategory === "Wisata" && styles.activeTab,
+              styles.mainCategoryTab,
+              activeMainCategory === "Wisata" && styles.activeMainCategoryTab,
             ]}
-            onPress={() => handleMainTabChange("Wisata")}
+            onPress={() => handleMainCategoryChange("Wisata")}
           >
             <Text
               style={[
-                styles.tabText,
-                activeMainCategory === "Wisata" && styles.activeTabText,
+                styles.mainCategoryTabText,
+                activeMainCategory === "Wisata" &&
+                  styles.activeMainCategoryTabText,
               ]}
             >
               Wisata
@@ -436,15 +621,16 @@ const ExploreScreen = () => {
 
           <TouchableOpacity
             style={[
-              styles.tab,
-              activeMainCategory === "Budaya" && styles.activeTab,
+              styles.mainCategoryTab,
+              activeMainCategory === "Budaya" && styles.activeMainCategoryTab,
             ]}
-            onPress={() => handleMainTabChange("Budaya")}
+            onPress={() => handleMainCategoryChange("Budaya")}
           >
             <Text
               style={[
-                styles.tabText,
-                activeMainCategory === "Budaya" && styles.activeTabText,
+                styles.mainCategoryTabText,
+                activeMainCategory === "Budaya" &&
+                  styles.activeMainCategoryTabText,
               ]}
             >
               Budaya
@@ -453,32 +639,30 @@ const ExploreScreen = () => {
         </ScrollView>
       </View>
 
-      {/* Subcategories based on selected main category */}
-      {(activeMainCategory === "Wisata" || activeMainCategory === "Budaya") && (
-        <View style={styles.subTabContainer}>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            {getSubcategories(activeMainCategory).map((category) => (
-              <TouchableOpacity
-                key={category}
+      <View style={styles.tabsContainer}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.tabs}
+        >
+          {getSubcategories().map((tab) => (
+            <TouchableOpacity
+              key={tab}
+              style={[styles.tab, activeTab === tab && styles.activeTab]}
+              onPress={() => handleTabChange(tab)}
+            >
+              <Text
                 style={[
-                  styles.subTab,
-                  activeTab === category && styles.activeSubTab,
+                  styles.tabText,
+                  activeTab === tab && styles.activeTabText,
                 ]}
-                onPress={() => handleSubTabChange(category)}
               >
-                <Text
-                  style={[
-                    styles.subTabText,
-                    activeTab === category && styles.activeSubTabText,
-                  ]}
-                >
-                  {category}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
-        </View>
-      )}
+                {tab === "All" ? "Semua" : tab}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </View>
 
       <FlatList
         data={filteredItems}
@@ -505,7 +689,6 @@ const ExploreScreen = () => {
         }
       />
 
-      {/* Item Detail Modal */}
       <Modal
         animationType="slide"
         transparent={true}
@@ -554,7 +737,6 @@ const ExploreScreen = () => {
                 </View>
               </View>
 
-              {/* Location information */}
               {selectedItem?.location && (
                 <View style={styles.locationContainer}>
                   <Ionicons name="location" size={18} color="#252129" />
@@ -568,7 +750,119 @@ const ExploreScreen = () => {
                 {selectedItem?.description}
               </Text>
 
-              {/* Map preview for items with coordinates */}
+              <View style={styles.actionButtonsContainer}>
+                <TouchableOpacity
+                  style={styles.actionButton}
+                  onPress={() => {
+                    if (!selectedItem) return;
+
+                    if (isItemSaved(selectedItem.id)) {
+                      removeItem(selectedItem.id);
+                      ToastAndroid.show(
+                        "Item dihapus dari tersimpan",
+                        ToastAndroid.SHORT
+                      );
+                    } else {
+                      saveItem(selectedItem);
+                      ToastAndroid.show(
+                        "Item berhasil disimpan",
+                        ToastAndroid.SHORT
+                      );
+                    }
+                  }}
+                >
+                  <Ionicons
+                    name={
+                      isItemSaved(selectedItem?.id || "")
+                        ? "bookmark"
+                        : "bookmark-outline"
+                    }
+                    size={20}
+                    color="#fff"
+                    style={styles.actionButtonIcon}
+                  />
+                  <Text style={styles.actionButtonText}>
+                    {isItemSaved(selectedItem?.id || "")
+                      ? "Hapus dari Tersimpan"
+                      : "Simpan"}
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={styles.actionButton}
+                  onPress={() => {
+                    if (!selectedItem) return;
+                    const message = `Lihat destinasi menarik ini: ${
+                      selectedItem.name
+                    } di ${selectedItem.location || "Minahasa Utara"}`;
+                    Linking.openURL(
+                      `whatsapp://send?text=${encodeURIComponent(message)}`
+                    );
+                  }}
+                >
+                  <Ionicons
+                    name="share-social-outline"
+                    size={20}
+                    color="#fff"
+                    style={styles.actionButtonIcon}
+                  />
+                  <Text style={styles.actionButtonText}>Bagikan</Text>
+                </TouchableOpacity>
+              </View>
+
+              <View style={styles.audioPlayerContainer}>
+                <Text style={styles.sectionTitle}>Audio Penjelasan</Text>
+
+                <View style={styles.audioPlayer}>
+                  <TouchableOpacity
+                    style={styles.playPauseButton}
+                    disabled={isLoading}
+                    onPress={togglePlayback}
+                  >
+                    <Ionicons
+                      name={
+                        isLoading
+                          ? "hourglass-outline"
+                          : isPlaying
+                          ? "pause"
+                          : "play"
+                      }
+                      size={24}
+                      color="#fff"
+                    />
+                  </TouchableOpacity>
+
+                  <View style={styles.progressContainer}>
+                    <Text style={styles.timeText}>
+                      {formatTime(playbackPosition)}
+                    </Text>
+
+                    <View style={styles.sliderContainer}>
+                      <View style={styles.progressBar}>
+                        <View
+                          style={[
+                            styles.progressFill,
+                            {
+                              width:
+                                playbackDuration > 0
+                                  ? `${
+                                      (playbackPosition / playbackDuration) *
+                                      100
+                                    }%`
+                                  : "0%",
+                            },
+                          ]}
+                        />
+                      </View>
+                    </View>
+
+                    <Text style={styles.timeText}>
+                      {formatTime(playbackDuration)}
+                    </Text>
+                  </View>
+                </View>
+              </View>
+
               {selectedItem?.coordinates && (
                 <View style={styles.mapPreviewContainer}>
                   <Text style={styles.sectionTitle}>Lokasi</Text>
@@ -598,43 +892,6 @@ const ExploreScreen = () => {
                   </View>
                 </View>
               )}
-
-              <View style={styles.modalAction}>
-                <TouchableOpacity
-                  style={styles.actionButton}
-                  activeOpacity={0.8}
-                  onPress={() => selectedItem && handleSaveItem(selectedItem)}
-                >
-                  <Ionicons
-                    name={
-                      selectedItem && isItemSaved(selectedItem.id)
-                        ? "bookmark"
-                        : "bookmark-outline"
-                    }
-                    size={20}
-                    color="#fff"
-                    style={styles.actionIcon}
-                  />
-                  <Text style={styles.actionText}>
-                    {selectedItem && isItemSaved(selectedItem.id)
-                      ? "Tersimpan"
-                      : "Simpan"}
-                  </Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={styles.actionButton}
-                  activeOpacity={0.8}
-                >
-                  <Ionicons
-                    name="share-social-outline"
-                    size={20}
-                    color="#fff"
-                    style={styles.actionIcon}
-                  />
-                  <Text style={styles.actionText}>Bagikan</Text>
-                </TouchableOpacity>
-              </View>
             </ScrollView>
           </View>
         </View>
@@ -682,55 +939,6 @@ const styles = StyleSheet.create({
     height: "100%",
     fontFamily: "Gabarito-Regular",
     fontSize: 16,
-  },
-  tabContainer: {
-    paddingHorizontal: 16,
-    marginBottom: 8,
-  },
-  tab: {
-    paddingVertical: 10,
-    paddingHorizontal: 18,
-    marginRight: 10,
-    borderRadius: 20,
-    backgroundColor: "#f0f0f0",
-  },
-  activeTab: {
-    backgroundColor: "#252129",
-  },
-  tabText: {
-    fontFamily: "Gabarito-Regular",
-    fontSize: 14,
-    color: "#666",
-  },
-  activeTabText: {
-    color: "#fff",
-    fontFamily: "Gabarito-Bold",
-  },
-  subTabContainer: {
-    paddingHorizontal: 16,
-    marginBottom: 12,
-  },
-  subTab: {
-    paddingVertical: 6,
-    paddingHorizontal: 14,
-    marginRight: 8,
-    borderRadius: 16,
-    backgroundColor: "#f8f8f8",
-    borderWidth: 1,
-    borderColor: "#e5e5e5",
-  },
-  activeSubTab: {
-    backgroundColor: "#e0e0e0",
-    borderColor: "#c0c0c0",
-  },
-  subTabText: {
-    fontFamily: "Gabarito-Regular",
-    fontSize: 13,
-    color: "#000",
-  },
-  activeSubTabText: {
-    color: "#000",
-    fontFamily: "Gabarito-SemiBold",
   },
   listContainer: {
     padding: 16,
@@ -818,7 +1026,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#999",
   },
-  // Modal styles
   modalOverlay: {
     flex: 1,
     backgroundColor: "rgba(0, 0, 0, 0.5)",
@@ -828,7 +1035,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    height: "80%", // Takes 80% of screen height
+    height: "80%",
     padding: 20,
     shadowColor: "#000",
     shadowOffset: {
@@ -874,41 +1081,75 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     marginBottom: 20,
   },
-  modalAction: {
+  actionButtonsContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: 20,
-    marginBottom: 30,
+    marginBottom: 20,
   },
   actionButton: {
-    backgroundColor: "#252129",
-    borderRadius: 12,
-    paddingVertical: 12,
-    paddingHorizontal: 20,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
-    flex: 0.48,
+    backgroundColor: "#252129",
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 12,
+    flex: 1,
+    marginHorizontal: 5,
   },
-  actionIcon: {
+  actionButtonIcon: {
     marginRight: 8,
   },
-  actionText: {
+  actionButtonText: {
     color: "#fff",
     fontFamily: "Gabarito-SemiBold",
-    fontSize: 16,
+    fontSize: 14,
   },
-  itemTitleRow: {
+  audioPlayerContainer: {
+    marginBottom: 20,
+    backgroundColor: "#f8f8f8",
+    borderRadius: 16,
+    padding: 16,
+  },
+  audioPlayer: {
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 6,
+    marginTop: 10,
   },
-
-  savedIcon: {
-    marginLeft: 8,
+  playPauseButton: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: "#252129",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 12,
   },
-
+  progressContainer: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  sliderContainer: {
+    flex: 1,
+    marginHorizontal: 8,
+  },
+  progressBar: {
+    height: 4,
+    backgroundColor: "#e0e0e0",
+    borderRadius: 2,
+    overflow: "hidden",
+  },
+  progressFill: {
+    height: "100%",
+    backgroundColor: "#252129",
+    borderRadius: 2,
+  },
+  timeText: {
+    fontFamily: "Gabarito-Regular",
+    fontSize: 12,
+    color: "#666",
+  },
   locationContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -919,37 +1160,31 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     alignSelf: "flex-start",
   },
-
   locationText: {
     marginLeft: 6,
     fontFamily: "Gabarito-Regular",
     fontSize: 14,
     color: "#444",
   },
-
   sectionTitle: {
     fontFamily: "Gabarito-Bold",
     fontSize: 18,
     marginBottom: 12,
     color: "#252129",
   },
-
   mapPreviewContainer: {
     marginTop: 16,
     marginBottom: 20,
   },
-
   mapContainer: {
     height: 200,
     borderRadius: 16,
     overflow: "hidden",
     position: "relative",
   },
-
   map: {
     ...StyleSheet.absoluteFillObject,
   },
-
   openMapButton: {
     position: "absolute",
     bottom: 16,
@@ -961,12 +1196,74 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     borderRadius: 20,
   },
-
   openMapText: {
     color: "#fff",
     fontFamily: "Gabarito-SemiBold",
     fontSize: 14,
     marginLeft: 6,
+  },
+  itemTitleRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 4,
+  },
+  savedIcon: {
+    marginLeft: 6,
+  },
+  mainCategoryTabsContainer: {
+    marginBottom: 8,
+  },
+  mainCategoryTabs: {
+    paddingHorizontal: 16,
+    paddingVertical: 4,
+  },
+  mainCategoryTab: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    marginRight: 8,
+    borderRadius: 20,
+    backgroundColor: "#f5f5f5",
+    borderWidth: 1,
+    borderColor: "#e0e0e0",
+  },
+  activeMainCategoryTab: {
+    backgroundColor: "#252129",
+    borderColor: "#252129",
+  },
+  mainCategoryTabText: {
+    fontFamily: "Gabarito-Medium",
+    fontSize: 14,
+    color: "#666",
+  },
+  activeMainCategoryTabText: {
+    color: "#fff",
+  },
+  tabsContainer: {
+    marginBottom: 10,
+  },
+  tabs: {
+    paddingHorizontal: 16,
+    paddingBottom: 8,
+  },
+  tab: {
+    paddingHorizontal: 16,
+    paddingVertical: 6,
+    marginRight: 8,
+    borderRadius: 16,
+    backgroundColor: "#f5f5f5",
+  },
+  activeTab: {
+    backgroundColor: "#e0e0e0",
+  },
+  tabText: {
+    fontFamily: "Gabarito-Regular",
+    fontSize: 14,
+    color: "#666",
+  },
+  activeTabText: {
+    color: "#252129",
+    fontFamily: "Gabarito-Medium",
   },
 });
 
