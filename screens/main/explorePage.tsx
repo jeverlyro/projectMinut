@@ -12,8 +12,6 @@ import {
   Platform,
   UIManager,
   Modal,
-  Dimensions,
-  Pressable,
   ToastAndroid,
   Alert,
   Linking,
@@ -22,11 +20,22 @@ import { Ionicons } from "@expo/vector-icons";
 import { useSavedItems, CulturalItem } from "../../services/SavedItemsContext";
 import MapView, { Marker } from "react-native-maps";
 import { Audio } from "expo-av";
+import { useNavigation, NavigationProp } from "@react-navigation/native";
 
-// Extend CulturalItem to include audio property
 interface ExtendedCulturalItem extends CulturalItem {
   audioFile?: string;
 }
+
+type RootStackParamList = {
+  ModelViewer: {
+    modelInfo: {
+      name: string;
+      modelUrl: string;
+      description: string;
+    };
+  };
+  // Add other screens as needed
+};
 
 if (
   Platform.OS === "android" &&
@@ -41,11 +50,16 @@ const culturalItems: ExtendedCulturalItem[] = [
     name: "Pantai Likupang",
     type: "Wisata",
     category: "Pantai",
-    image: { uri: "https://placehold.co/400x300/png?text=Pantai+Likupang" },
+    image: {
+      uri: "https://cdn.idntimes.com/content-images/community/2022/08/fromandroid-9ca5bb4c3db071c4c57ff04ca0626c53_600x400.jpg",
+    },
     description:
       "Pantai eksotis di Zona Ekonomi Khusus (KEK) yang mencakup Pantai Paal, Pulisan, dan Kinunang dengan pasir putih dan air laut jernih.",
     location: "Likupang Timur, Minahasa Utara",
-    coordinates: { latitude: 1.6728, longitude: 125.0694 },
+    coordinates: {
+      latitude: 1.6823031142032934,
+      longitude: 125.14779381850882,
+    },
     audioFile: "Pantai Likupang.mp3",
   },
   {
@@ -53,11 +67,16 @@ const culturalItems: ExtendedCulturalItem[] = [
     name: "Pulau Lihaga",
     type: "Wisata",
     category: "Pulau",
-    image: { uri: "https://placehold.co/400x300/png?text=Pulau+Lihaga" },
+    image: {
+      uri: "https://cdn.idntimes.com/content-images/community/2022/05/217629100-203359038378628-2800122740935437306-n-41de55f2c34bd9d1bd2b234d79dab910-8e53f31fa4f4f222d8cb3d05cca4f08b.jpg",
+    },
     description:
       "Pulau kecil dengan pantai berpasir putih dan air laut biru jernih, ideal untuk snorkeling dan diving.",
     location: "Likupang Timur, Minahasa Utara",
-    coordinates: { latitude: 1.7236, longitude: 125.0145 },
+    coordinates: {
+      latitude: 1.7616158680289602,
+      longitude: 125.03677189025609,
+    },
     audioFile: "Lihaga.mp3",
   },
   {
@@ -65,11 +84,13 @@ const culturalItems: ExtendedCulturalItem[] = [
     name: "Pulau Gangga",
     type: "Wisata",
     category: "Pulau",
-    image: { uri: "https://placehold.co/400x300/png?text=Pulau+Gangga" },
+    image: {
+      uri: "https://th.bing.com/th/id/OIP.LMCZcnFEJlfcXQcJdeR8WAEsDI?w=231&h=180&c=7&r=0&o=5&dpr=1.3&pid=1.7",
+    },
     description:
       "Pulau dengan resort eksklusif, terkenal dengan terumbu karang dan kehidupan laut yang beragam.",
     location: "Likupang Barat, Minahasa Utara",
-    coordinates: { latitude: 1.7512, longitude: 125.0487 },
+    coordinates: { latitude: 1.7615957609386508, longitude: 125.0512146946257 },
     audioFile: "gangga.mp3",
   },
   {
@@ -77,11 +98,16 @@ const culturalItems: ExtendedCulturalItem[] = [
     name: "Pulau Bangka",
     type: "Wisata",
     category: "Pulau",
-    image: { uri: "https://placehold.co/400x300/png?text=Pulau+Bangka" },
+    image: {
+      uri: "https://th.bing.com/th/id/OIP.SH8iwqxN6H609tvMc5JdfAHaEM?w=306&h=180&c=7&r=0&o=5&dpr=1.3&pid=1.7",
+    },
     description:
       "Pulau indah dengan pantai eksotis dan pemandangan bawah laut yang mempesona untuk kegiatan menyelam.",
     location: "Likupang Barat, Minahasa Utara",
-    coordinates: { latitude: 1.7645, longitude: 125.0563 },
+    coordinates: {
+      latitude: 1.7974414954372149,
+      longitude: 125.18322671097842,
+    },
     audioFile: "bangka.mp3",
   },
   {
@@ -89,11 +115,16 @@ const culturalItems: ExtendedCulturalItem[] = [
     name: "Air Terjun Tunan",
     type: "Wisata",
     category: "Alam",
-    image: { uri: "https://placehold.co/400x300/png?text=Air+Terjun+Tunan" },
+    image: {
+      uri: "https://th.bing.com/th/id/OIP.FfiuEK0whOoqe5HlegDaIQHaEc?rs=1&pid=ImgDetMain",
+    },
     description:
       "Air terjun yang indah dengan ketinggian sekitar 20 meter, dikelilingi vegetasi hijau yang asri.",
     location: "Dimembe, Minahasa Utara",
-    coordinates: { latitude: 1.5567, longitude: 124.9802 },
+    coordinates: {
+      latitude: 1.5684001555483225,
+      longitude: 124.97291564932739,
+    },
     audioFile: "Tunan.mp3",
   },
   {
@@ -101,11 +132,13 @@ const culturalItems: ExtendedCulturalItem[] = [
     name: "Gunung Klabat",
     type: "Wisata",
     category: "Alam",
-    image: { uri: "https://placehold.co/400x300/png?text=Gunung+Klabat" },
+    image: {
+      uri: "https://atourin.obs.ap-southeast-3.myhuaweicloud.com/images/destination/minahasa-utara/gunung-klabat-profile1645959098.png?x-image-process=image/resize,p_100,limit_1/imageslim",
+    },
     description:
       "Gunung tertinggi di Sulawesi Utara (1995 mdpl) dengan jalur pendakian yang menantang dan pemandangan spektakuler.",
     location: "Airmadidi, Minahasa Utara",
-    coordinates: { latitude: 1.4096, longitude: 124.9833 },
+    coordinates: { latitude: 1.4536536565252405, longitude: 125.0317299451305 },
     audioFile: "klabat.mp3",
   },
   {
@@ -113,11 +146,16 @@ const culturalItems: ExtendedCulturalItem[] = [
     name: "Kaki Dian",
     type: "Wisata",
     category: "Alam",
-    image: { uri: "https://placehold.co/400x300/png?text=Kaki+Dian" },
+    image: {
+      uri: "https://media-cdn.tripadvisor.com/media/photo-s/05/e5/b8/22/kaki-dian.jpg",
+    },
     description:
       "Danau vulkanik berair biru yang terletak di kaki Gunung Klabat dengan keindahan alam yang mempesona.",
     location: "Airmadidi, Minahasa Utara",
-    coordinates: { latitude: 1.4123, longitude: 124.9856 },
+    coordinates: {
+      latitude: 1.4369417926909949,
+      longitude: 124.99302332546253,
+    },
     audioFile: "kaki dian.mp3",
   },
   {
@@ -125,11 +163,16 @@ const culturalItems: ExtendedCulturalItem[] = [
     name: "Hutan Kenangan",
     type: "Wisata",
     category: "Alam",
-    image: { uri: "https://placehold.co/400x300/png?text=Hutan+Kenangan" },
+    image: {
+      uri: "https://klikjo.id/wp-content/uploads/2021/08/IMG_20210817_122918.jpg",
+    },
     description:
       "Area konservasi alam dengan berbagai jenis vegetasi khas Sulawesi Utara yang asri dan sejuk.",
     location: "Airmadidi, Minahasa Utara",
-    coordinates: { latitude: 1.4156, longitude: 124.9879 },
+    coordinates: {
+      latitude: 1.4568012450935772,
+      longitude: 124.97424136666629,
+    },
     audioFile: "hutan kenangan.mp3",
   },
   {
@@ -137,35 +180,27 @@ const culturalItems: ExtendedCulturalItem[] = [
     name: "Waruga Sawangan",
     type: "Wisata",
     category: "Sejarah",
-    image: { uri: "https://placehold.co/400x300/png?text=Waruga+Sawangan" },
+    image: {
+      uri: "https://th.bing.com/th/id/OIP.PYtyafEAFQXfc-joT7gq6gHaE8?w=278&h=185&c=7&r=0&o=5&dpr=1.3&pid=1.7",
+    },
     description:
       "Situs sejarah berupa kuburan batu tradisional Minahasa yang menunjukkan budaya pemakaman zaman dulu.",
     location: "Sawangan, Minahasa Utara",
-    coordinates: { latitude: 1.4723, longitude: 124.9921 },
+    coordinates: { latitude: 1.39280388942744, longitude: 124.96349545105363 },
     audioFile: "waruga sawngan.mp3",
-  },
-  {
-    id: "10",
-    name: "Kuliner & Pasar Tradisional",
-    type: "Wisata",
-    category: "Kuliner",
-    image: { uri: "https://placehold.co/400x300/png?text=Kuliner+Tradisional" },
-    description:
-      "Pusat jajanan dan kuliner khas Minahasa Utara dengan berbagai masakan tradisional yang menggugah selera.",
-    location: "Airmadidi, Minahasa Utara",
-    coordinates: { latitude: 1.4096, longitude: 124.9833 },
-    audioFile: "kuliner pasar tradisional.mp3",
   },
   {
     id: "11",
     name: "Bukit Larata",
     type: "Wisata",
     category: "Alam",
-    image: { uri: "https://placehold.co/400x300/png?text=Bukit+Larata" },
+    image: {
+      uri: "https://th.bing.com/th/id/OIP.Cqc412uHn8Fu5pYpWu0zdgHaEX?w=299&h=180&c=7&r=0&o=5&dpr=1.3&pid=1.7",
+    },
     description:
       "Bukit dengan pemandangan panorama indah matahari terbit dan matahari terbenam yang memukau.",
     location: "Likupang Barat, Minahasa Utara",
-    coordinates: { latitude: 1.7512, longitude: 125.0487 },
+    coordinates: { latitude: 1.666508499422102, longitude: 125.16217682077153 },
     audioFile: "bukit larata.mp3",
   },
   {
@@ -173,11 +208,16 @@ const culturalItems: ExtendedCulturalItem[] = [
     name: "Tanjung Tarabitan",
     type: "Wisata",
     category: "Pantai",
-    image: { uri: "https://placehold.co/400x300/png?text=Tanjung+Tarabitan" },
+    image: {
+      uri: "https://th.bing.com/th/id/OIP.6uN1MZzELOHlWnH7r7X2SAHaD4?w=338&h=180&c=7&r=0&o=5&dpr=1.3&pid=1.7",
+    },
     description:
       "Area tanjung dengan pantai indah dan pemandangan laut lepas yang memukau.",
     location: "Likupang Barat, Minahasa Utara",
-    coordinates: { latitude: 1.7645, longitude: 125.0563 },
+    coordinates: {
+      latitude: 1.7383812600297632,
+      longitude: 124.98513273708187,
+    },
     audioFile: "tanjung tarabitan.mp3",
   },
   {
@@ -185,11 +225,16 @@ const culturalItems: ExtendedCulturalItem[] = [
     name: "Arung Jeram Sawangan",
     type: "Wisata",
     category: "Petualangan",
-    image: { uri: "https://placehold.co/400x300/png?text=Arung+Jeram" },
+    image: {
+      uri: "https://th.bing.com/th/id/OIP.Xlqmh2h_jMd62wmNDAnn0QHaEK?w=302&h=180&c=7&r=0&o=5&dpr=1.3&pid=1.7",
+    },
     description:
       "Lokasi arung jeram menantang dengan pemandangan alam yang indah di sepanjang jalur sungai.",
     location: "Sawangan, Minahasa Utara",
-    coordinates: { latitude: 1.4723, longitude: 124.9921 },
+    coordinates: {
+      latitude: 1.3930915799446035,
+      longitude: 124.96360239968145,
+    },
     audioFile: "arum jeram sawangan.mp3",
   },
   {
@@ -197,7 +242,9 @@ const culturalItems: ExtendedCulturalItem[] = [
     name: "Taman Makam Pahlawan Maria Walanda Maramis",
     type: "Wisata",
     category: "Sejarah",
-    image: { uri: "https://placehold.co/400x300/png?text=Makam+MWM" },
+    image: {
+      uri: "https://th.bing.com/th/id/OIP.XxnZwa91Ok6pIZwyH76IowHaEK?w=295&h=180&c=7&r=0&o=5&dpr=1.3&pid=1.7",
+    },
     description:
       "Situs sejarah yang mengenang jasa pahlawan nasional Maria Walanda Maramis, pejuang hak perempuan.",
     location: "Airmadidi, Minahasa Utara",
@@ -209,7 +256,9 @@ const culturalItems: ExtendedCulturalItem[] = [
     name: "Merawale",
     type: "Budaya",
     category: "Tradisi",
-    image: { uri: "https://placehold.co/400x300/png?text=Merawale" },
+    image: {
+      uri: "https://th.bing.com/th/id/OIP.JWq5gRr1drgMdUrKjF7RkwHaFc?w=242&h=180&c=7&r=0&o=5&dpr=1.3&pid=1.7",
+    },
     description:
       "Tradisi musyawarah masyarakat Minahasa untuk menyelesaikan permasalahan bersama secara kekeluargaan.",
     location: "Minahasa Utara",
@@ -220,7 +269,9 @@ const culturalItems: ExtendedCulturalItem[] = [
     name: "Mapalus",
     type: "Budaya",
     category: "Tradisi",
-    image: { uri: "https://placehold.co/400x300/png?text=Mapalus" },
+    image: {
+      uri: "https://asset-2.tstatic.net/tribunmanadowiki/foto/bank/images/ilustrasi-mapalus.jpg",
+    },
     description:
       "Sistem gotong royong dan kerja sama tradisional masyarakat Minahasa dalam berbagai kegiatan sosial dan pertanian.",
     location: "Minahasa Utara",
@@ -231,7 +282,9 @@ const culturalItems: ExtendedCulturalItem[] = [
     name: "Adat Tulude Desa Budo",
     type: "Budaya",
     category: "Upacara",
-    image: { uri: "https://placehold.co/400x300/png?text=Adat+Tulude" },
+    image: {
+      uri: "https://upload.wikimedia.org/wikipedia/commons/6/65/Kue_tamo.jpg",
+    },
     description:
       "Upacara tradisional yang dilaksanakan sebagai ucapan syukur dan harapan untuk tahun baru yang lebih baik.",
     location: "Minahasa Utara",
@@ -242,7 +295,9 @@ const culturalItems: ExtendedCulturalItem[] = [
     name: "Tari Tumatenden",
     type: "Budaya",
     category: "Tarian",
-    image: { uri: "https://placehold.co/400x300/png?text=Tari+Tumatenden" },
+    image: {
+      uri: "https://t-2.tstatic.net/tribunnewswiki/foto/bank/images/Tari-Tumatenden-3.jpg",
+    },
     description:
       "Tarian tradisional Minahasa yang menggambarkan kesopanan dan keramahan gadis-gadis Minahasa.",
     location: "Minahasa Utara",
@@ -253,7 +308,9 @@ const culturalItems: ExtendedCulturalItem[] = [
     name: "Tari Ampe Wayer",
     type: "Budaya",
     category: "Tarian",
-    image: { uri: "https://placehold.co/400x300/png?text=Tari+Ampe+Wayer" },
+    image: {
+      uri: "https://upload.wikimedia.org/wikipedia/commons/1/19/Ampa_wayer.jpg",
+    },
     description:
       "Tarian lincah dan energik yang dilakukan secara berkelompok, menunjukkan kegembiraan dan persaudaraan.",
     location: "Minahasa Utara",
@@ -264,7 +321,9 @@ const culturalItems: ExtendedCulturalItem[] = [
     name: "Tradisi Pemakaman Waruga",
     type: "Budaya",
     category: "Tradisi",
-    image: { uri: "https://placehold.co/400x300/png?text=Tradisi+Waruga" },
+    image: {
+      uri: "https://th.bing.com/th/id/OIP.CqI5tJ5TzSR1HrRbIdni7AHaE7?rs=1&pid=ImgDetMain",
+    },
     description:
       "Tradisi pemakaman kuno masyarakat Minahasa menggunakan peti batu berbentuk kubus yang unik.",
     location: "Minahasa Utara",
@@ -275,7 +334,9 @@ const culturalItems: ExtendedCulturalItem[] = [
     name: "Pengucapan Syukur",
     type: "Budaya",
     category: "Upacara",
-    image: { uri: "https://placehold.co/400x300/png?text=Pengucapan+Syukur" },
+    image: {
+      uri: "https://student-activity.binus.ac.id/bssc/wp-content/uploads/sites/38/2022/10/PENGUCAPAN-SYUKUR-MINAHASAN-VERSION-OF-THANKSGIVING-image1.jpg",
+    },
     description:
       "Festival tahunan yang menunjukkan rasa syukur atas hasil panen, ditandai dengan pesta dan berbagi makanan.",
     location: "Minahasa Utara",
@@ -284,6 +345,7 @@ const culturalItems: ExtendedCulturalItem[] = [
 ];
 
 const ExploreScreen = () => {
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState("All");
   const [activeMainCategory, setActiveMainCategory] = useState("All");
@@ -341,7 +403,10 @@ const ExploreScreen = () => {
     }
 
     // Filter by subcategory
-    if (activeTab !== "All") {
+    if (activeTab === "3D Model") {
+      // Show only items with 3D models
+      result = result.filter((item) => has3DModel(item.name));
+    } else if (activeTab !== "All") {
       result = result.filter((item) => item.category === activeTab);
     }
 
@@ -366,7 +431,17 @@ const ExploreScreen = () => {
     }
 
     items.forEach((item) => subcategories.add(item.category));
-    return ["All", ...Array.from(subcategories)];
+
+    // Check if any filtered items have 3D models
+    const has3DItems = items.some((item) => has3DModel(item.name));
+
+    // If there are items with 3D models, add "3D Model" to subcategories
+    const allCategories = ["All", ...Array.from(subcategories)];
+    if (has3DItems) {
+      allCategories.push("3D Model");
+    }
+
+    return allCategories;
   };
 
   const onPlaybackStatusUpdate = (status: any) => {
@@ -501,8 +576,20 @@ const ExploreScreen = () => {
     }
   };
 
+  const has3DModel = (itemName: string): boolean => {
+    return (
+      itemName === "Gunung Klabat" ||
+      itemName === "Waruga Sawangan" || // Changed from "Tradisi Pemakaman Waruga"
+      itemName === "Kaki Dian"
+    );
+  };
+
   const renderCultureItem = ({ item }: { item: ExtendedCulturalItem }) => {
     const saved = isItemSaved(item.id);
+    const has3DModel =
+      item.name === "Gunung Klabat" ||
+      item.name === "Waruga Sawangan" ||
+      item.name === "Kaki Dian";
 
     return (
       <View>
@@ -512,6 +599,12 @@ const ExploreScreen = () => {
           onPress={() => handleItemPress(item)}
         >
           <Image source={item.image} style={styles.itemImage} />
+          {has3DModel && (
+            <View style={styles.model3dBadge}>
+              <Ionicons name="cube-outline" size={14} color="#fff" />
+              <Text style={styles.model3dBadgeText}>3D</Text>
+            </View>
+          )}
           <View style={styles.itemContent}>
             <View style={styles.itemTitleRow}>
               <Text style={styles.itemTitle}>{item.name}</Text>
@@ -538,6 +631,11 @@ const ExploreScreen = () => {
               <View style={[styles.badge, styles.categoryBadge]}>
                 <Text style={styles.categoryType}>{item.category}</Text>
               </View>
+              {has3DModel && (
+                <View style={[styles.badge, styles.model3dBadgeSmall]}>
+                  <Text style={styles.model3dTypeSmall}>3D</Text>
+                </View>
+              )}
             </View>
             <Text style={styles.itemDescription} numberOfLines={2}>
               {item.description}
@@ -551,6 +649,32 @@ const ExploreScreen = () => {
   const handleItemPress = (item: ExtendedCulturalItem) => {
     setSelectedItem(item);
     setModalVisible(true);
+  };
+
+  const getModelUrlForItem = (itemName: string): string => {
+    switch (itemName) {
+      case "Gunung Klabat":
+        return "https://modelviewer.dev/shared-assets/models/Astronaut.glb";
+      case "Waruga Sawangan":
+        return "https://modelviewer.dev/shared-assets/models/Astronaut.glb";
+      case "Kaki Dian":
+        return "https://modelviewer.dev/shared-assets/models/Astronaut.glb";
+      default:
+        return "https://modelviewer.dev/shared-assets/models/Astronaut.glb";
+    }
+  };
+
+  const get3DModelDescription = (itemName: string): string => {
+    switch (itemName) {
+      case "Gunung Klabat":
+        return "Model 3D ini menunjukkan bentuk dan kontur Gunung Klabat, gunung tertinggi di Sulawesi Utara dengan ketinggian 1995 meter di atas permukaan laut.";
+      case "Waruga Sawangan":
+        return "Model 3D ini menampilkan detail dari situs Waruga di Sawangan, tempat pemakaman batu tradisional berbentuk kubus yang unik dari budaya Minahasa.";
+      case "Kaki Dian":
+        return "Model 3D ini memperlihatkan area Kaki Dian yang terletak di kaki Gunung Klabat.";
+      default:
+        return "";
+    }
   };
 
   return (
@@ -890,6 +1014,35 @@ const ExploreScreen = () => {
                       <Text style={styles.openMapText}>Buka di Peta</Text>
                     </TouchableOpacity>
                   </View>
+                </View>
+              )}
+
+              {(selectedItem?.name === "Gunung Klabat" ||
+                selectedItem?.name === "Waruga Sawangan" ||
+                selectedItem?.name === "Kaki Dian") && (
+                <View style={styles.modelButtonContainer}>
+                  <Text style={styles.sectionTitle}>Model 3D</Text>
+                  <TouchableOpacity
+                    style={styles.model3dButton}
+                    onPress={() => {
+                      setModalVisible(false);
+                      navigation.navigate("ModelViewer", {
+                        modelInfo: {
+                          name: selectedItem.name,
+                          modelUrl: getModelUrlForItem(selectedItem.name),
+                          description: get3DModelDescription(selectedItem.name),
+                        },
+                      });
+                    }}
+                  >
+                    <Ionicons
+                      name="cube-outline"
+                      size={20}
+                      color="#fff"
+                      style={styles.model3dButtonIcon}
+                    />
+                    <Text style={styles.model3dButtonText}>Lihat Model 3D</Text>
+                  </TouchableOpacity>
                 </View>
               )}
             </ScrollView>
@@ -1232,7 +1385,7 @@ const styles = StyleSheet.create({
     borderColor: "#252129",
   },
   mainCategoryTabText: {
-    fontFamily: "Gabarito-Medium",
+    fontFamily: "Gabarito-SemiBold",
     fontSize: 14,
     color: "#666",
   },
@@ -1263,7 +1416,53 @@ const styles = StyleSheet.create({
   },
   activeTabText: {
     color: "#252129",
-    fontFamily: "Gabarito-Medium",
+    fontFamily: "Gabarito-SemiBold",
+  },
+  modelButtonContainer: {
+    marginTop: 16,
+    marginBottom: 20,
+  },
+  model3dButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#252129",
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 12,
+  },
+  model3dButtonIcon: {
+    marginRight: 8,
+  },
+  model3dButtonText: {
+    color: "#fff",
+    fontFamily: "Gabarito-SemiBold",
+    fontSize: 14,
+  },
+  model3dBadge: {
+    position: "absolute",
+    top: 10,
+    left: 10,
+    backgroundColor: "#3498db",
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    borderRadius: 12,
+    flexDirection: "row",
+    alignItems: "center",
+    zIndex: 1,
+  },
+  model3dBadgeText: {
+    color: "#fff",
+    fontFamily: "Gabarito-SemiBold",
+    fontSize: 12,
+    marginLeft: 2,
+  },
+  model3dBadgeSmall: {
+    backgroundColor: "#3498db",
+  },
+  model3dTypeSmall: {
+    fontFamily: "Gabarito-Regular",
+    fontSize: 13,
+    color: "#fff",
   },
 });
 
