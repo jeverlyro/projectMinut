@@ -24,7 +24,7 @@ import ProfileDetailsScreen from "./screens/profileScreens/profileDetailsPage";
 import SettingsScreen from "./screens/settingScreens/settingsPage";
 import EditProfileScreen from "./screens/profileScreens/editProfileScreen";
 import ChangePasswordScreen from "./screens/settingScreens/changePasswordScreen";
-import ModelViewerScreen from "./components/modelViewer";
+import ModelViewer from "./components/ModelViewer";
 
 // Define the type for the navigation stack parameters
 type RootStackParamList = {
@@ -37,7 +37,9 @@ type RootStackParamList = {
   Settings: undefined;
   EditProfile: undefined;
   ChangePassword: undefined;
-  ModelViewer: undefined;
+  ModelViewer: {
+    modelInfo: { name: string; modelUrl: number | { uri: string } };
+  };
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -158,7 +160,7 @@ export default function App() {
             />
             <Stack.Screen
               name="ModelViewer"
-              component={ModelViewerScreen}
+              component={ModelViewer}
               options={{ headerShown: false }}
             />
           </Stack.Navigator>

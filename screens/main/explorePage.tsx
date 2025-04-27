@@ -341,6 +341,19 @@ const culturalItems: ExtendedCulturalItem[] = [
     location: "Minahasa Utara",
     audioFile: "pengucapan.mp3",
   },
+  {
+    id: "22",
+    name: "Kolintang",
+    type: "Budaya",
+    category: "Tradisi",
+    image: {
+      uri: "https://www.djkn.kemenkeu.go.id/files/images/2021/09/Manado_-_Kolintang_IE1.jpeg",
+    },
+    description:
+      "Kolintang adalah alat musik perkusi tradisional dari Minahasa, terdiri dari bilah-bilah kayu yang disusun sejajar dan dipukul dengan stik khusus untuk menghasilkan melodi yang khas.",
+    location: "Minahasa Utara",
+    audioFile: "kolintang.mp3",
+  },
 ];
 
 const ExploreScreen = () => {
@@ -536,6 +549,9 @@ const ExploreScreen = () => {
             case "waruga.mp3":
               audioModule = require("../../assets/audios/waruga.mp3");
               break;
+            case "kolintang.mp3":
+              audioModule = require("../../assets/audios/kolintang.mp3");
+              break;
             default:
               throw new Error(
                 `Audio file not found: ${selectedItem.audioFile}`
@@ -576,19 +592,36 @@ const ExploreScreen = () => {
   };
 
   const has3DModel = (itemName: string): boolean => {
-    return (
-      itemName === "Gunung Klabat" ||
-      itemName === "Waruga Sawangan" ||
-      itemName === "Kaki Dian"
-    );
+    return itemName === "Waruga Sawangan" || itemName === "Kolintang";
+  };
+
+  const open3DModel = (itemName: string) => {
+    if (has3DModel(itemName)) {
+      navigation.navigate("ModelViewer", {
+        modelInfo: {
+          name: itemName,
+          modelUrl: getModelUrlForItem(itemName),
+          description: get3DModelDescription(itemName),
+        },
+      });
+    }
+  };
+
+  const openYoutubeVideo = (itemName: string) => {
+    switch (itemName) {
+      case "Tari Tumatenden":
+        Linking.openURL("https://youtu.be/jWGP87gq-cw?si=TO8zIsfr1LE9OKXR");
+        break;
+      // Add more cases for other items with videos in the future
+      default:
+        return;
+    }
   };
 
   const renderCultureItem = ({ item }: { item: ExtendedCulturalItem }) => {
     const saved = isItemSaved(item.id);
     const has3DModel =
-      item.name === "Gunung Klabat" ||
-      item.name === "Waruga Sawangan" ||
-      item.name === "Kaki Dian";
+      item.name === "Waruga Sawangan" || item.name === "Kolintang";
 
     return (
       <View>
@@ -650,27 +683,23 @@ const ExploreScreen = () => {
     setModalVisible(true);
   };
 
-  const getModelUrlForItem = (itemName: string): string => {
+  const getModelUrlForItem = (itemName: string) => {
     switch (itemName) {
-      case "Gunung Klabat":
-        return "https://modelviewer.dev/shared-assets/models/Astronaut.glb";
       case "Waruga Sawangan":
-        return "https://raw.githubusercontent.com/jeverlyro/projectMinut/devFinal/assets/models/waruga.glb";
-      case "Kaki Dian":
-        return "https://modelviewer.dev/shared-assets/models/Astronaut.glb";
+        return "https://v.magiscan.app/model/67f932c6f602c12a2789b986.html";
+      case "Kolintang":
+        return "https://v.magiscan.app/model/67fd0976f602c12a278a40da.html";
       default:
-        return "https://modelviewer.dev/shared-assets/models/Astronaut.glb";
+        return "https://v.magiscan.app/model/67fd0976f602c12a278a40da.html";
     }
   };
 
   const get3DModelDescription = (itemName: string): string => {
     switch (itemName) {
-      case "Gunung Klabat":
-        return "Model 3D ini menunjukkan bentuk dan kontur Gunung Klabat, gunung tertinggi di Sulawesi Utara dengan ketinggian 1995 meter di atas permukaan laut.";
       case "Waruga Sawangan":
         return "Model 3D ini menampilkan detail dari situs Waruga di Sawangan, tempat pemakaman batu tradisional berbentuk kubus yang unik dari budaya Minahasa.";
-      case "Kaki Dian":
-        return "Model 3D ini memperlihatkan area Kaki Dian yang terletak di kaki Gunung Klabat.";
+      case "Kolintang":
+        return "Model 3D ini memperlihatkan detail instrumen musik tradisional Kolintang dari Minahasa, yang terbuat dari bilah-bilah kayu dengan berbagai ukuran untuk menghasilkan nada yang berbeda.";
       default:
         return "";
     }
@@ -1016,9 +1045,8 @@ const ExploreScreen = () => {
                 </View>
               )}
 
-              {(selectedItem?.name === "Gunung Klabat" ||
-                selectedItem?.name === "Waruga Sawangan" ||
-                selectedItem?.name === "Kaki Dian") && (
+              {(selectedItem?.name === "Waruga Sawangan" ||
+                selectedItem?.name === "Kolintang") && (
                 <View style={styles.modelButtonContainer}>
                   <Text style={styles.sectionTitle}>Model 3D</Text>
                   <TouchableOpacity
@@ -1041,6 +1069,26 @@ const ExploreScreen = () => {
                       style={styles.model3dButtonIcon}
                     />
                     <Text style={styles.model3dButtonText}>Lihat Model 3D</Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+
+              {selectedItem?.name === "Tari Tumatenden" && (
+                <View style={styles.youtubeContainer}>
+                  <Text style={styles.sectionTitle}>Video Tarian</Text>
+                  <TouchableOpacity
+                    style={styles.youtubeButton}
+                    onPress={() => openYoutubeVideo(selectedItem.name)}
+                  >
+                    <Ionicons
+                      name="logo-youtube"
+                      size={20}
+                      color="#fff"
+                      style={styles.youtubeButtonIcon}
+                    />
+                    <Text style={styles.youtubeButtonText}>
+                      Tonton di YouTube
+                    </Text>
                   </TouchableOpacity>
                 </View>
               )}
@@ -1462,6 +1510,26 @@ const styles = StyleSheet.create({
     fontFamily: "Gabarito-Regular",
     fontSize: 13,
     color: "#fff",
+  },
+  youtubeContainer: {
+    marginTop: 16,
+    marginBottom: 20,
+  },
+  youtubeButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#FF0000",
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 12,
+  },
+  youtubeButtonIcon: {
+    marginRight: 8,
+  },
+  youtubeButtonText: {
+    color: "#fff",
+    fontFamily: "Gabarito-SemiBold",
+    fontSize: 14,
   },
 });
 
