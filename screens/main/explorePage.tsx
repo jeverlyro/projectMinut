@@ -651,13 +651,11 @@ const ExploreScreen = () => {
   };
 
   const getModelUrlForItem = (itemName: string): string => {
-    // Use remote URLs for all models until local asset handling is fixed
     switch (itemName) {
       case "Gunung Klabat":
         return "https://modelviewer.dev/shared-assets/models/Astronaut.glb";
       case "Waruga Sawangan":
-        // Previously trying to use require("../../assets/models/waruga.glb") which isn't working
-        return "https://modelviewer.dev/shared-assets/models/Astronaut.glb";
+        return "https://raw.githubusercontent.com/jeverlyro/projectMinut/devFinal/assets/models/waruga.glb";
       case "Kaki Dian":
         return "https://modelviewer.dev/shared-assets/models/Astronaut.glb";
       default:
