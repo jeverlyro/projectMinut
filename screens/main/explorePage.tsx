@@ -34,7 +34,6 @@ type RootStackParamList = {
       description: string;
     };
   };
-  // Add other screens as needed
 };
 
 if (
@@ -579,7 +578,7 @@ const ExploreScreen = () => {
   const has3DModel = (itemName: string): boolean => {
     return (
       itemName === "Gunung Klabat" ||
-      itemName === "Waruga Sawangan" || // Changed from "Tradisi Pemakaman Waruga"
+      itemName === "Waruga Sawangan" ||
       itemName === "Kaki Dian"
     );
   };
@@ -652,10 +651,12 @@ const ExploreScreen = () => {
   };
 
   const getModelUrlForItem = (itemName: string): string => {
+    // Use remote URLs for all models until local asset handling is fixed
     switch (itemName) {
       case "Gunung Klabat":
         return "https://modelviewer.dev/shared-assets/models/Astronaut.glb";
       case "Waruga Sawangan":
+        // Previously trying to use require("../../assets/models/waruga.glb") which isn't working
         return "https://modelviewer.dev/shared-assets/models/Astronaut.glb";
       case "Kaki Dian":
         return "https://modelviewer.dev/shared-assets/models/Astronaut.glb";

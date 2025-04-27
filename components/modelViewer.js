@@ -8,54 +8,84 @@ import {
   Dimensions,
   SafeAreaView,
   StatusBar,
+  Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { WebView } from "react-native-webview";
+import { Asset } from "expo-asset";
 
 const { width, height } = Dimensions.get("window");
 
 const ModelViewerScreen = ({ route, navigation }) => {
   const { modelInfo } = route.params;
   const [isLoading, setIsLoading] = useState(true);
+  const [modelUri, setModelUri] = useState(null);
 
-  // HTML content for the 3D model viewer
+  const prepareModel = async () => {
+    setIsLoading(true);
+    try {
+      // Check if it's a remote URL or local path
+      if (
+        typeof modelInfo.modelUrl === "string" &&
+        modelInfo.modelUrl.startsWith("http")
+      ) {
+        // Handle remote URLs
+        setModelUri(modelInfo.modelUrl);
+      } else {
+        // For local files, we use the Asset system
+        const asset = Asset.fromModule(modelInfo.modelUrl);
+        await asset.downloadAsync();
+        setModelUri(asset.uri);
+      }
+    } catch (error) {
+      console.error("Error loading model:", error);
+      Alert.alert("Error", "Failed to load 3D model");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    prepareModel();
+  }, []);
+
   const modelViewerHTML = `
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>${modelInfo.name} 3D Model</title>
-        <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
-        <style>
-          body {
-            margin: 0;
-            padding: 0;
-            width: 100vw;
-            height: 100vh;
-            background-color: #f5f5f5;
-          }
-          model-viewer {
-            width: 100%;
-            height: 100%;
-            background-color: #f5f5f5;
-          }
-        </style>
-      </head>
-      <body>
-        <model-viewer
-          src="${modelInfo.modelUrl}"
-          alt="${modelInfo.name}"
-          auto-rotate
-          camera-controls
-          ar
-          ar-modes="webxr scene-viewer quick-look"
-          environment-image="neutral"
-          shadow-intensity="1"
-        ></model-viewer>
-      </body>
-    </html>
-  `;
+  <!DOCTYPE html>
+  <html>
+    <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>${modelInfo.name} 3D Model</title>
+      <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+      <style>
+        body {
+          margin: 0;
+          padding: 0;
+          width: 100vw;
+          height: 100vh;
+          background-color: #f5f5f5;
+        }
+        model-viewer {
+          width: 100%;
+          height: 100%;
+          background-color: #f5f5f5;
+        }
+      </style>
+    </head>
+    <body>
+      <model-viewer
+        src="${modelUri}"
+        alt="${modelInfo.name}"
+        auto-rotate
+        camera-controls
+        ar
+        ar-modes="webxr scene-viewer quick-look"
+        environment-image="neutral"
+        shadow-intensity="1"
+      ></model-viewer>
+    </body>
+  </html>
+`;
 
   return (
     <SafeAreaView style={styles.container}>
@@ -75,21 +105,20 @@ const ModelViewerScreen = ({ route, navigation }) => {
         {isLoading && (
           <View style={styles.loadingContainer}>
             <ActivityIndicator size="large" color="#252129" />
-            <Text style={styles.loadingText}>Memuat model 3D...</Text>
+            <Text style={styles.loadingText}>Loading ...</Text>
           </View>
         )}
 
         <WebView
           source={{ html: modelViewerHTML }}
           style={styles.webview}
-          onLoadEnd={() => setIsLoading(false)}
           javaScriptEnabled={true}
           domStorageEnabled={true}
         />
       </View>
 
       <View style={styles.infoContainer}>
-        <Text style={styles.infoTitle}>Panduan Penggunaan:</Text>
+        <Text style={styles.infoTitle}>Tips:</Text>
         <View style={styles.instructionRow}>
           <Ionicons name="finger-print-outline" size={20} color="#252129" />
           <Text style={styles.infoText}>

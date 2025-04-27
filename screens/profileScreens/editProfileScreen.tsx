@@ -29,7 +29,7 @@ import * as FileSystem from "expo-file-system";
 import axios from "axios";
 import CustomNotification from "../../components/CustomNotification";
 
-const API_URL = "http://192.168.150.219:5000/api"; // This should match what's in your api.ts file
+const API_URL = "http://192.168.95.219:5000/api"; // This should match what's in your api.ts file
 
 type EditProfileScreenProps = {
   navigation: any;

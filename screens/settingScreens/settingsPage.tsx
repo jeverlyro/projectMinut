@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   View,
   Text,
@@ -7,9 +7,15 @@ import {
   TouchableOpacity,
   StatusBar,
   ScrollView,
-} from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { useFonts, Gabarito_400Regular, Gabarito_500Medium, Gabarito_600SemiBold, Gabarito_700Bold } from '@expo-google-fonts/gabarito';
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import {
+  useFonts,
+  Gabarito_400Regular,
+  Gabarito_500Medium,
+  Gabarito_600SemiBold,
+  Gabarito_700Bold,
+} from "@expo-google-fonts/gabarito";
 
 type SettingsScreenProps = {
   navigation: any;
@@ -31,40 +37,54 @@ const SettingsScreen = ({ navigation }: SettingsScreenProps) => {
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#fff" />
       <View style={styles.header}>
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.backButton}
           onPress={() => navigation.goBack()}
         >
           <Ionicons name="arrow-back" size={24} color="#252129" />
         </TouchableOpacity>
         <Text style={styles.title}>Pengaturan</Text>
-        <View style={{width: 24}} />
+        <View style={{ width: 24 }} />
       </View>
 
       <ScrollView>
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Akun</Text>
-          
-          <TouchableOpacity 
+
+          <TouchableOpacity
             style={styles.menuItem}
-            onPress={() => navigation.navigate('EditProfile')}
+            onPress={() => navigation.navigate("EditProfile")}
           >
-            <View style={[styles.iconContainer, {backgroundColor: '#f8f8f9'}]}>
+            <View
+              style={[styles.iconContainer, { backgroundColor: "#f8f8f9" }]}
+            >
               <Ionicons name="person" size={22} color="#252129" />
             </View>
-            <Text style={styles.menuText}>Ubah Data Profil</Text>
-            <Ionicons name="chevron-forward" size={20} color="#6c757d" style={styles.arrowIcon} />
+            <Text style={styles.menuText}>Edit Profil</Text>
+            <Ionicons
+              name="chevron-forward"
+              size={20}
+              color="#6c757d"
+              style={styles.arrowIcon}
+            />
           </TouchableOpacity>
 
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.menuItem}
-            onPress={() => navigation.navigate('ChangePassword')}
+            onPress={() => navigation.navigate("ChangePassword")}
           >
-            <View style={[styles.iconContainer, {backgroundColor: '#f8f8f9'}]}>
+            <View
+              style={[styles.iconContainer, { backgroundColor: "#f8f8f9" }]}
+            >
               <Ionicons name="key" size={22} color="#252129" />
             </View>
             <Text style={styles.menuText}>Ganti Kata Sandi</Text>
-            <Ionicons name="chevron-forward" size={20} color="#6c757d" style={styles.arrowIcon} />
+            <Ionicons
+              name="chevron-forward"
+              size={20}
+              color="#6c757d"
+              style={styles.arrowIcon}
+            />
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -78,20 +98,20 @@ const styles = StyleSheet.create({
     backgroundColor: "#FCFCFC",
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     padding: 20,
     paddingTop: 20,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   backButton: {
     padding: 5,
   },
   title: {
     fontSize: 20,
-    fontFamily: 'GabaritoBold',
-    color: '#252129',
+    fontFamily: "GabaritoBold",
+    color: "#252129",
   },
   section: {
     marginTop: 16,
@@ -99,8 +119,8 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 18,
-    fontFamily: 'GabaritoBold',
-    color: '#252129',
+    fontFamily: "GabaritoBold",
+    color: "#252129",
     marginBottom: 16,
     paddingLeft: 4,
   },
@@ -114,15 +134,15 @@ const styles = StyleSheet.create({
     shadowColor: "#000",
     shadowOpacity: 0.04,
     shadowRadius: 8,
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: { width: 0, height: 2 },
     elevation: 2,
   },
   iconContainer: {
     width: 40,
     height: 40,
     borderRadius: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginRight: 16,
   },
   menuText: {
@@ -132,7 +152,7 @@ const styles = StyleSheet.create({
     fontFamily: "GabaritoRegular",
   },
   arrowIcon: {
-    marginLeft: 'auto',
+    marginLeft: "auto",
   },
 });
 
