@@ -28,6 +28,7 @@ type RootStackParamList = {
   SignIn: undefined;
   SignUp: undefined;
   MainApp: undefined;
+  ForgotPassword: undefined;
 };
 
 type SignInScreenProps = {
@@ -238,12 +239,7 @@ const SignIn: React.FC<SignInScreenProps> = ({ navigation }) => {
 
           <TouchableOpacity
             style={styles.forgotPassword}
-            onPress={() =>
-              showNotification(
-                "info",
-                "Fitur reset kata sandi akan segera tersedia."
-              )
-            }
+            onPress={() => navigation.navigate("ForgotPassword")}
           >
             <Ionicons
               name="help-circle-outline"

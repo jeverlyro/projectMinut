@@ -93,6 +93,50 @@ export const auth = {
       throw error;
     }
   },
+
+  requestPasswordReset: async (email: string) => {
+    try {
+      const response = await axios.post(`${API_URL}/auth/forgot-password`, {
+        email,
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Request password reset error:", error);
+      throw error;
+    }
+  },
+
+  verifyResetToken: async (token: string) => {
+    try {
+      const response = await axios.get(
+        `${API_URL}/auth/reset-password/${token}`
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Verify reset token error:", error);
+      throw error;
+    }
+  },
+
+  resetPassword: async (
+    email: string,
+    token: string,
+    otp: string,
+    newPassword: string
+  ) => {
+    try {
+      const response = await axios.post(`${API_URL}/auth/reset-password`, {
+        email,
+        token,
+        otp,
+        newPassword,
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Reset password error:", error);
+      throw error;
+    }
+  },
 };
 
 export const user = {
