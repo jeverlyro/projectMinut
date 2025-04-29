@@ -1,7 +1,7 @@
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export const API_URL = "http://192.168.95.219:5000/api";
+export const API_URL = "https://minutappbackend-production.up.railway.app/api";
 
 // For debugging: Add console logs to check connection
 console.log("API URL:", API_URL);
