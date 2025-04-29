@@ -6,14 +6,13 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "newArchEnabled": true,
-    "assetBundlePatterns": ["**/*", "assets/models/*.glb"],
+    "newArchEnabled": false,
+    "assetBundlePatterns": ["**/*"],
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-
     "ios": {
       "supportsTablet": true
     },
@@ -26,10 +25,16 @@
         "googleMaps": {
           "apiKey": "AIzaSyBsUtVXIMqoL4vhIV72ZHYs-8eg3wdRV-c"
         }
-      }
+      },
+      "package": "com.rechtownsyou.minut"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "207dd93a-20be-4b28-a87d-3fe2e78087de"
+      }
     }
   }
 }
