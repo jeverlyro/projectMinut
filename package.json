@@ -6,7 +6,9 @@
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "build:android": "eas build -p android",
+    "build:ios": "eas build -p ios"
   },
   "dependencies": {
     "@expo-google-fonts/gabarito": "^0.3.0",
@@ -20,6 +22,7 @@
     "expo-app-loading": "^2.1.1",
     "expo-av": "^15.0.2",
     "expo-blur": "~14.0.3",
+    "expo-constants": "^17.0.8",
     "expo-font": "^13.0.4",
     "expo-gl": "~15.0.5",
     "expo-image-picker": "^16.0.6",
