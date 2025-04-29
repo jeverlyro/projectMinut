@@ -1,26 +1,42 @@
 {
   "expo": {
-    "name": "minut",
+    "name": "Minut App",
     "slug": "minut",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/logo.svg",
     "userInterfaceStyle": "light",
     "newArchEnabled": false,
+    "plugins": [
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow Minut App to use your location to show your position on the map."
+        }
+      ]
+    ],
     "assetBundlePatterns": ["**/*"],
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/logo.svg",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "config": {
+        "googleMapsApiKey": "AIzaSyBsUtVXIMqoL4vhIV72ZHYs-8eg3wdRV-c"
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
+      "permissions": [
+        "INTERNET",
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION"
+      ],
       "config": {
         "googleMaps": {
           "apiKey": "AIzaSyBsUtVXIMqoL4vhIV72ZHYs-8eg3wdRV-c"

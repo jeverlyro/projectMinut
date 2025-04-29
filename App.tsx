@@ -12,6 +12,8 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { SavedItemsProvider } from "./services/SavedItemsContext";
 
+import { enableMapLibraries } from "./services/mapConfig";
+
 import HomePage from "./screens/main/homePage";
 import ExploreScreen from "./screens/main/explorePage";
 import ProfileScreen from "./screens/profileScreens/profilePage";

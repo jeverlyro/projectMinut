@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   StyleSheet,
@@ -7,10 +7,12 @@ import {
   TouchableOpacity,
   SafeAreaView,
   StatusBar,
+  Platform,
 } from "react-native";
 import { useRoute, useNavigation, RouteProp } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import WebView from "react-native-webview";
+import { StatusBar as ExpoStatusBar } from "expo-status-bar";
 
 // Define the expected route parameters
 type ModelViewerRouteParams = {
@@ -30,13 +32,29 @@ type ModelViewerRouteProp = RouteProp<
 export default function ModelViewer() {
   const route = useRoute<ModelViewerRouteProp>();
   const navigation = useNavigation();
-  const { modelInfo } = route.params;
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { name, modelUrl, description } = route.params?.modelInfo || {};
+
+  useEffect(() => {
+    // Set status bar to light mode for dark background
+    StatusBar.setBarStyle("light-content");
+    if (Platform.OS === "android") {
+      StatusBar.setBackgroundColor("#252129");
+    }
+
+    return () => {
+      // Reset when unmounting
+      StatusBar.setBarStyle("dark-content");
+      if (Platform.OS === "android") {
+        StatusBar.setBackgroundColor("transparent");
+      }
+    };
+  }, []);
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <StatusBar barStyle="dark-content" />
+      <ExpoStatusBar style="light" />
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.backButton}
@@ -44,7 +62,7 @@ export default function ModelViewer() {
         >
           <Ionicons name="arrow-back" size={24} color="#252129" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>{modelInfo.name}</Text>
+        <Text style={styles.headerTitle}>{name}</Text>
         <View style={{ width: 24 }} />
       </View>
 
@@ -73,7 +91,7 @@ export default function ModelViewer() {
                   </style>
                 </head>
                 <body>
-                  <iframe src="${modelInfo.modelUrl}" allowfullscreen></iframe>
+                  <iframe src="${modelUrl}" allowfullscreen></iframe>
                 </body>
               </html>
             `,
@@ -107,7 +125,7 @@ export default function ModelViewer() {
       <View style={styles.descriptionContainer}>
         <Text style={styles.descriptionTitle}>Deskripsi:</Text>
         <Text style={styles.descriptionText}>
-          {modelInfo.description || "No description available."}
+          {description || "No description available."}
         </Text>
       </View>
     </SafeAreaView>
