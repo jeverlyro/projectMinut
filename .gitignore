@@ -13,7 +13,9 @@ web-build/
 
 # Native
 *.orig.*
+# Ignore all JKS files except our specific one
 *.jks
+!@rechtownsyou__minut.jks
 *.p8
 *.p12
 *.key
@@ -40,3 +42,6 @@ yarn-error.*
 
 # typescript
 *.tsbuildinfo
+
+android/gradle.properties
+android/app/my-upload-key.keystore
