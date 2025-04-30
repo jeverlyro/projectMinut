@@ -4,7 +4,7 @@
     "slug": "minut",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/logo.svg",
+    "icon": "./assets/logo.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": false,
     "plugins": [
@@ -17,8 +17,10 @@
     ],
     "assetBundlePatterns": ["**/*"],
     "splash": {
-      "image": "./assets/logo.svg",
+      "image": "./assets/logo.png",
       "resizeMode": "contain",
+      "width": 512,
+      "height": 512,
       "backgroundColor": "#ffffff"
     },
     "ios": {
